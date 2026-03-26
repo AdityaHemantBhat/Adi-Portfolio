@@ -18,11 +18,13 @@ export default function CustomCursor() {
 
     if (dot) {
       dot.style.transform = `translate3d(${x - 8}px, ${y - 8}px, 0) scale(${isHovering.current ? 0 : 1})`;
+      dot.style.opacity = '1';
     }
 
     if (ring) {
       ring.style.transform = `translate3d(${x - 24}px, ${y - 24}px, 0) scale(${isHovering.current ? 1.5 : 1})`;
       ring.style.backgroundColor = isHovering.current ? 'rgba(255,255,255,1)' : 'rgba(255,255,255,0)';
+      ring.style.opacity = '1';
     }
 
     if (viewLabel) {
@@ -74,14 +76,14 @@ export default function CustomCursor() {
     <>
       <div
         ref={dotRef}
-        className="fixed top-0 left-0 w-4 h-4 bg-white rounded-full pointer-events-none z-[9999] mix-blend-difference"
-        style={{ willChange: 'transform', transition: 'transform 0.1s cubic-bezier(0.18, 0.89, 0.32, 1.27)' }}
+        className="hidden lg:block fixed top-0 left-0 w-4 h-4 bg-white rounded-full pointer-events-none z-[9999] mix-blend-difference opacity-0"
+        style={{ willChange: 'transform', transition: 'opacity 0.3s, transform 0.1s cubic-bezier(0.18, 0.89, 0.32, 1.27)' }}
         aria-hidden="true"
       />
       <div
         ref={ringRef}
-        className="fixed top-0 left-0 w-12 h-12 border-2 border-white rounded-full pointer-events-none z-[9998] mix-blend-difference flex items-center justify-center"
-        style={{ willChange: 'transform', transition: 'transform 0.2s ease-out, background-color 0.2s ease-out' }}
+        className="hidden lg:flex fixed top-0 left-0 w-12 h-12 border-2 border-white rounded-full pointer-events-none z-[9998] mix-blend-difference items-center justify-center opacity-0"
+        style={{ willChange: 'transform', transition: 'opacity 0.3s, transform 0.2s ease-out, background-color 0.2s ease-out' }}
         aria-hidden="true"
       >
         <span
