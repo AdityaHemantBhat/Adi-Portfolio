@@ -1,15 +1,17 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, lazy, Suspense } from 'react';
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
 import Layout from './components/layout/Layout';
 import Loader from './components/ui/Loader';
 import Home from './pages/Home';
-import Lookbook from './pages/Lookbook';
-import Contact from './pages/Contact';
-import Project from './pages/Project';
-import PrivacyPolicy from './pages/PrivacyPolicy';
-import TermsOfService from './pages/TermsOfService';
 import { ProjectProvider } from './context/ProjectContext';
+
+// Lazy load non-critical routes for better code splitting
+const Lookbook = lazy(() => import('./pages/Lookbook'));
+const Contact = lazy(() => import('./pages/Contact'));
+const Project = lazy(() => import('./pages/Project'));
+const PrivacyPolicy = lazy(() => import('./pages/PrivacyPolicy'));
+const TermsOfService = lazy(() => import('./pages/TermsOfService'));
 
 const circleTransition = { duration: 0.8, ease: [0.76, 0, 0.24, 1] as const };
 
@@ -26,6 +28,16 @@ const circleStyle: React.CSSProperties = {
   backgroundColor: 'var(--color-foreground, #222)',
   willChange: 'transform',
 };
+
+// Minimal loading fallback for lazy routes
+function RouteFallback() {
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-background" role="status" aria-label="Loading page">
+      <div className="w-8 h-8 border-2 border-neutral-300 border-t-neutral-900 rounded-full animate-spin" />
+      <span className="sr-only">Loading…</span>
+    </div>
+  );
+}
 
 function AnimatedRoutes() {
   const location = useLocation();
@@ -56,14 +68,16 @@ function AnimatedRoutes() {
           transition={circleTransition}
         />
         <div className="min-h-screen bg-background">
-          <Routes location={location}>
-            <Route path="/" element={<Home />} />
-            <Route path="/lookbook" element={<Lookbook />} />
-            <Route path="/contact" element={<Contact />} />
-            <Route path="/project/:id" element={<Project />} />
-            <Route path="/privacy" element={<PrivacyPolicy />} />
-            <Route path="/terms" element={<TermsOfService />} />
-          </Routes>
+          <Suspense fallback={<RouteFallback />}>
+            <Routes location={location}>
+              <Route path="/" element={<Home />} />
+              <Route path="/lookbook" element={<Lookbook />} />
+              <Route path="/contact" element={<Contact />} />
+              <Route path="/project/:id" element={<Project />} />
+              <Route path="/privacy" element={<PrivacyPolicy />} />
+              <Route path="/terms" element={<TermsOfService />} />
+            </Routes>
+          </Suspense>
         </div>
       </motion.div>
     </AnimatePresence>
@@ -89,4 +103,3 @@ export default function App() {
     </ProjectProvider>
   );
 }
-

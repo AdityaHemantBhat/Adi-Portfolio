@@ -7,7 +7,7 @@ import CustomCursor from '../ui/CustomCursor';
 import BackToTop from '../ui/BackToTop';
 
 export default function Layout({ children }: { children: ReactNode }) {
-    const lenisRef = useRef<any>(null);
+    const lenisRef = useRef(null);
     const location = useLocation();
 
     useEffect(() => {
@@ -24,7 +24,7 @@ export default function Layout({ children }: { children: ReactNode }) {
             <a href="#main-content" className="skip-link">Skip to main content</a>
             <CustomCursor />
             <Navbar />
-            <main id="main-content" className="min-h-screen bg-[#111] text-foreground selection:bg-accent selection:text-white">
+            <main id="main-content" className="min-h-screen bg-background text-foreground selection:bg-accent selection:text-white">
                 {children}
             </main>
             <Footer />

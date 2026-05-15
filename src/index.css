@@ -2,7 +2,8 @@
 
 @font-face {
   font-family: 'Media Sans SemiCondensed';
-  src: url('/font/mediasanssemicondensed-regular.otf') format('opentype');
+  src: url('/font/mediasanssemicondensed-regular.woff2') format('woff2'),
+       url('/font/mediasanssemicondensed-regular.otf') format('opentype');
   font-weight: normal;
   font-style: normal;
   font-display: swap;
@@ -50,6 +51,14 @@
       animation-iteration-count: 1 !important;
       transition-duration: 0.01ms !important;
       scroll-behavior: auto !important;
+    }
+  }
+
+  /* Ensure minimum touch target sizes for mobile accessibility */
+  @media (pointer: coarse) {
+    a, button {
+      min-height: 44px;
+      min-width: 44px;
     }
   }
 }
@@ -140,4 +149,17 @@ html.lenis, html.lenis body {
 
 .skip-link:focus {
   top: 0;
+}
+
+/* Focus visible styles for keyboard accessibility */
+:focus-visible {
+  outline: 2px solid #111;
+  outline-offset: 2px;
+}
+
+/* Responsive container queries */
+@media (max-width: 374px) {
+  html {
+    font-size: 14px;
+  }
 }

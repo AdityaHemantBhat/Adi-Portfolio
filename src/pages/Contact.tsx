@@ -14,9 +14,9 @@ export default function Contact() {
     setIsSubmitting(true);
     setStatus('idle');
 
-    const serviceId = (import.meta as any).env.VITE_EMAILJS_SERVICE_ID 
-    const templateId = (import.meta as any).env.VITE_EMAILJS_TEMPLATE_ID 
-    const publicKey = (import.meta as any).env.VITE_EMAILJS_PUBLIC_KEY
+    const serviceId = import.meta.env.VITE_EMAILJS_SERVICE_ID;
+    const templateId = import.meta.env.VITE_EMAILJS_TEMPLATE_ID;
+    const publicKey = import.meta.env.VITE_EMAILJS_PUBLIC_KEY;
 
     emailjs.sendForm(serviceId, templateId, form.current, publicKey)
       .then(() => {
@@ -34,14 +34,14 @@ export default function Contact() {
   };
 
   return (
-    <div className="min-h-screen bg-background pt-32 px-6 md:px-12 lg:px-24 pb-24 flex items-center justify-center">
-      <div className="max-w-4xl w-full mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16">
+    <div className="min-h-screen bg-background pt-28 md:pt-32 px-6 md:px-12 lg:px-24 pb-24 flex items-center justify-center">
+      <div className="max-w-4xl w-full mx-auto grid grid-cols-1 lg:grid-cols-2 gap-10 md:gap-16">
         <div>
           <motion.h1 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
-            className="font-display text-6xl md:text-8xl lg:text-9xl uppercase tracking-tighter mb-8"
+            className="font-display text-5xl sm:text-6xl md:text-8xl lg:text-9xl uppercase tracking-tighter mb-8"
           >
             Hello.
           </motion.h1>

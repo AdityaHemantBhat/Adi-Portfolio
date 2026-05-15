@@ -12,7 +12,6 @@ export default defineConfig({
     rollupOptions: {
       output: {
         manualChunks: {
-          'vendor-react': ['react', 'react-dom'],
           'vendor-router': ['react-router-dom'],
           'vendor-animation': ['framer-motion', 'gsap'],
         },
@@ -28,5 +27,15 @@ export default defineConfig({
     },
     // Target modern browsers
     target: 'es2020',
+    // Enable source maps for debugging but not in production
+    sourcemap: false,
+    // Increase chunk size warning limit
+    chunkSizeWarningLimit: 600,
+    // Asset inlining threshold (4kb)
+    assetsInlineLimit: 4096,
+  },
+  // Optimize dependencies
+  optimizeDeps: {
+    include: ['react', 'react-dom', 'react-router-dom', 'framer-motion', 'gsap'],
   },
 })

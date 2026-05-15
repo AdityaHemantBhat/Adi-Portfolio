@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, lazy, memo } from 'react';
+import { useEffect, useRef, useState, memo } from 'react';
 import { motion, useScroll, useTransform, AnimatePresence, useMotionValue, useSpring } from 'framer-motion';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
@@ -14,7 +14,7 @@ const FAQItem = memo(({ faq, index }: { faq: { q: string; a: string }; index: nu
     <div className="border-b border-neutral-200">
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="w-full flex cursor-pointer items-center justify-between py-6 font-display text-2xl uppercase tracking-tight text-left hover-target"
+        className="w-full flex cursor-pointer items-center justify-between py-4 md:py-6 font-display text-xl md:text-2xl uppercase tracking-tight text-left hover-target"
         aria-expanded={isOpen}
         id={`faq-button-${index}`}
         aria-controls={`faq-panel-${index}`}
@@ -144,10 +144,10 @@ export default function Home() {
     // Determine dynamic GSAP delay by checking if the Global Loader is currently natively visible.
     const loaderExists = document.getElementById('global-preloader');
     
-    // If the Loader is active (during hard refresh), manually delay the Hero sequence exactly 4.8 seconds.
-    // This perfectly snaps the "Webdesign" & "Fullstack" text wipe so it happens physically AFTER 
-    // the black diagonal doors explicitly unlatch and pull completely apart.
-    const initialDelay = loaderExists ? 4.8 : 0.2; 
+    // Start hero animation early so content is visible as curtains split open.
+    // Curtains begin at ~3s, fully open at ~3.9s. Starting at 2.5s means hero 
+    // content is already animating in when the split reveals the page.
+    const initialDelay = loaderExists ? 2.5 : 0.2; 
 
     // GSAP animations for sections
     const ctx = gsap.context(() => {
@@ -354,7 +354,7 @@ export default function Home() {
         {/* Main Content Container */}
         <div className="relative w-full max-w-[100vw] mx-auto min-h-[85vh] flex flex-col items-center justify-center mt-12 md:mt-16 h-full overflow-visible">
 
-          <div className="relative w-full h-full min-h-[800px] flex items-center justify-center">
+          <div className="relative w-full h-full min-h-[600px] md:min-h-[800px] flex items-center justify-center">
 
             {/* LAYER 1: Background Layer (Centred) */}
             <div className="absolute inset-0 flex flex-col items-center justify-center z-0 pointer-events-none w-full">
@@ -362,7 +362,7 @@ export default function Home() {
 
                 {/* Webdesigner Background - Dual Layer */}
                 <div className="hero-text-1 relative w-full flex justify-center group" style={{ opacity: 0 }}>
-                  <h1 className="font-hero text-[16vw] leading-[0.85] w-full text-center whitespace-nowrap pointer-events-auto cursor-none hover-target transition-opacity duration-500 subpixel-antialiased"
+                  <h1 className="font-hero text-[14vw] md:text-[16vw] leading-[0.85] w-full text-center whitespace-nowrap pointer-events-auto cursor-none hover-target transition-opacity duration-500 subpixel-antialiased"
                     style={{
                       WebkitTextFillColor: '#111',
                       opacity: hoveredText === 'software' ? 0 : 1,
@@ -374,7 +374,7 @@ export default function Home() {
                   >
                     Webdesigner
                   </h1>
-                  <h1 className="absolute inset-0 font-hero text-[16vw] leading-[0.85] w-full text-center whitespace-nowrap pointer-events-none transition-opacity duration-500 subpixel-antialiased"
+                  <span className="absolute inset-0 font-hero text-[14vw] md:text-[16vw] leading-[0.85] w-full text-center whitespace-nowrap pointer-events-none transition-opacity duration-500 subpixel-antialiased"
                     style={{
                       WebkitTextFillColor: 'transparent',
                       WebkitTextStroke: '1.5px #111',
@@ -385,12 +385,12 @@ export default function Home() {
                     aria-hidden="true"
                   >
                     Webdesigner
-                  </h1>
+                  </span>
                 </div>
 
                 {/* FullStack Background - Dual Layer */}
                 <div className="hero-text-2 relative w-full flex justify-center mt-6 md:mt-8 group" style={{ opacity: 0 }}>
-                  <h1 className="font-hero text-[10vw] leading-[0.85] text-center whitespace-nowrap pointer-events-auto cursor-none hover-target transition-opacity duration-500 subpixel-antialiased"
+                  <span className="font-hero text-[8vw] md:text-[10vw] leading-[0.85] text-center whitespace-nowrap pointer-events-auto cursor-none hover-target transition-opacity duration-500 subpixel-antialiased block"
                     style={{
                       WebkitTextFillColor: '#111',
                       opacity: hoveredText === 'software' ? 1 : 0,
@@ -401,8 +401,8 @@ export default function Home() {
                     onMouseLeave={() => setHoveredText(null)}
                   >
                     & Full Stack Developer
-                  </h1>
-                  <h1 className="absolute inset-0 font-hero text-[10vw] leading-[0.85] text-center whitespace-nowrap pointer-events-none transition-opacity duration-500 subpixel-antialiased"
+                  </span>
+                  <span className="absolute inset-0 font-hero text-[8vw] md:text-[10vw] leading-[0.85] text-center whitespace-nowrap pointer-events-none transition-opacity duration-500 subpixel-antialiased"
                     style={{
                       WebkitTextFillColor: 'transparent',
                       WebkitTextStroke: '1.5px #111',
@@ -413,7 +413,7 @@ export default function Home() {
                     aria-hidden="true"
                   >
                     & Full Stack Developer
-                  </h1>
+                  </span>
                 </div>
               </div>
             </div>
@@ -460,22 +460,22 @@ export default function Home() {
                 aria-hidden="true"
               >
                 <motion.div style={{ x: maskTextX, y: maskTextY }} className="flex flex-col items-center justify-center w-full">
-                  <h1 className="hero-text-1 font-hero text-[16vw] leading-[0.85] w-full text-center whitespace-nowrap text-transparent antialiased"
+                  <span className="hero-text-1 font-hero text-[14vw] md:text-[16vw] leading-[0.85] w-full text-center whitespace-nowrap text-transparent antialiased block"
                     style={{
                       WebkitTextStroke: '2px white',
                       opacity: hoveredText === 'software' ? 0 : 1,
                       transition: 'opacity 0.4s ease-out'
                     }}>
                     Webdesigner
-                  </h1>
-                  <h1 className="hero-text-2 font-hero text-[10vw] leading-[0.85] text-center mt-6 md:mt-8 whitespace-nowrap text-transparent antialiased"
+                  </span>
+                  <span className="hero-text-2 font-hero text-[8vw] md:text-[10vw] leading-[0.85] text-center mt-6 md:mt-8 whitespace-nowrap text-transparent antialiased block"
                     style={{
                       WebkitTextStroke: '2px white',
                       opacity: hoveredText === 'software' ? 1 : 0,
                       transition: 'opacity 0.4s ease-out'
                     }}>
                     & Full Stack Developer
-                  </h1>
+                  </span>
                 </motion.div>
               </div>
 
@@ -507,7 +507,7 @@ export default function Home() {
       <section className="fade-up py-10 md:py-14 border-y border-neutral-100 bg-white overflow-hidden relative" aria-label="Technology stack">
         <div className="animate-marquee-slow flex whitespace-nowrap items-center">
           {[...techStack, ...techStack].map((tech, index) => (
-            <div key={index} className="mx-16 flex items-center gap-4 group hover:scale-105 transition-transform duration-500">
+            <div key={index} className="mx-8 md:mx-16 flex items-center gap-3 md:gap-4 group hover:scale-105 transition-transform duration-500">
               <img
                 src={`${CDN_BASE}/${tech.icon}.svg`}
                 alt=""
@@ -530,7 +530,7 @@ export default function Home() {
         <div className="absolute top-12 left-12 z-10">
           <h2 className="font-display text-4xl md:text-6xl uppercase tracking-tight">Featured Work</h2>
         </div>
-        <div className="horizontal-scroll flex gap-8 px-12 pt-32 h-[75vh]">
+        <div className="horizontal-scroll flex gap-4 md:gap-8 px-6 md:px-12 pt-28 md:pt-32 h-[75vh]">
           {projects.map((project) => (
             <Link
               key={project.id}
@@ -547,9 +547,9 @@ export default function Home() {
                 className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 object-top"
               />
               <div className="absolute inset-0 bg-black/20 group-hover:bg-black/60 transition-colors duration-500" />
-              <div className="absolute bottom-10 left-10 text-white translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
+              <div className="absolute bottom-6 left-6 md:bottom-10 md:left-10 text-white translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
                 <span className="font-sans text-sm uppercase tracking-widest block mb-2 opacity-70">{project.category}</span>
-                <h3 className="font-display text-3xl md:text-5xl uppercase leading-none">{project.title}</h3>
+                <h3 className="font-display text-2xl md:text-5xl uppercase leading-none">{project.title}</h3>
               </div>
               <div className="absolute top-10 right-10 w-12 h-12 rounded-full border border-white/30 flex items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-opacity duration-500" aria-hidden="true">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
@@ -562,25 +562,25 @@ export default function Home() {
       </section>
 
       {/* Cinematic 3D Card Rise Experience Section */}
-      <section className="experience-reveal-wrapper relative w-full h-screen bg-background overflow-hidden" aria-label="Professional experience" style={{ perspective: '1500px' }}>
-        <div className="experience-inner absolute inset-0 bg-accent w-full h-full flex flex-col justify-center px-6 md:px-12 lg:px-24 overflow-hidden shadow-[0_-20px_50px_rgba(0,0,0,0.15)]">
-          <div className="max-w-7xl mx-auto w-full relative z-10">
-            <div className="exp-content-reveal flex justify-between items-end mb-8 md:mb-12">
-              <h2 className="font-display text-4xl md:text-7xl uppercase tracking-tighter text-white">Professional<br />Experience</h2>
-              <span className="font-sans text-xs uppercase tracking-[0.3em] text-neutral-500 mb-2">2021 — PRESENT</span>
+      <section className="experience-reveal-wrapper relative w-full min-h-screen bg-background overflow-hidden" aria-label="Professional experience" style={{ perspective: '1500px' }}>
+        <div className="experience-inner absolute inset-0 bg-accent w-full h-full flex flex-col justify-center px-4 sm:px-6 md:px-12 lg:px-24 overflow-y-auto shadow-[0_-20px_50px_rgba(0,0,0,0.15)]">
+          <div className="max-w-7xl mx-auto w-full relative z-10 py-16 md:py-0">
+            <div className="exp-content-reveal flex flex-col sm:flex-row justify-between items-start sm:items-end mb-6 md:mb-12 gap-2 sm:gap-4">
+              <h2 className="font-display text-2xl sm:text-4xl md:text-7xl uppercase tracking-tighter text-white leading-[1.1]">Professional<br />Experience</h2>
+              <span className="font-sans text-[10px] sm:text-xs uppercase tracking-[0.3em] text-neutral-500 mb-0 sm:mb-2">2021 — PRESENT</span>
             </div>
 
-            <div className="exp-items-container space-y-4 md:space-y-4">
+            <div className="exp-items-container space-y-2 md:space-y-4">
               {experiences.map((exp, index) => (
-                <div key={index} className="exp-item relative grid grid-cols-1 md:grid-cols-12 gap-4 md:gap-6 items-start hover:bg-white/[0.04] transition-colors py-6 md:py-8 px-8 -mx-8 rounded-xl text-white">
-                  <div className="md:col-span-3 font-display text-2xl md:text-3xl text-neutral-400 group-hover:text-white transition-colors">
+                <div key={index} className="exp-item relative grid grid-cols-1 md:grid-cols-12 gap-1 md:gap-6 items-start hover:bg-white/[0.04] transition-colors py-3 md:py-8 px-3 md:px-8 -mx-3 md:-mx-8 rounded-xl text-white">
+                  <div className="md:col-span-3 font-display text-base sm:text-xl md:text-3xl text-neutral-400 group-hover:text-white transition-colors">
                     {exp.year}
                   </div>
                   <div className="md:col-span-9">
-                    <h3 className="font-display text-3xl md:text-5xl uppercase tracking-tight mb-2">
+                    <h3 className="font-display text-lg sm:text-2xl md:text-5xl uppercase tracking-tight mb-1 md:mb-2">
                       {exp.role}
                     </h3>
-                    <p className="font-sans text-base md:text-lg text-neutral-400 max-w-2xl leading-relaxed">
+                    <p className="font-sans text-xs sm:text-sm md:text-lg text-neutral-400 max-w-2xl leading-relaxed line-clamp-3 md:line-clamp-none">
                       {exp.description}
                     </p>
                   </div>
@@ -597,9 +597,9 @@ export default function Home() {
           className="whitespace-nowrap flex"
           style={{ x: useTransform(scrollYProgress, [0, 1], [0, -1000]) }}
         >
-          <h2 className="font-display text-[12vw] uppercase tracking-tighter text-accent leading-none px-8">
+          <span className="font-display text-[10vw] md:text-[12vw] uppercase tracking-tighter text-accent leading-none px-8">
             Show me what you've got • Show me what you've got • Show me what you've got •
-          </h2>
+          </span>
         </motion.div>
       </section>
 
@@ -608,9 +608,9 @@ export default function Home() {
         
         {/* Massive Background Intro Tile */}
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none select-none z-0" aria-hidden="true">
-           <h2 className="font-display text-[22vw] uppercase tracking-tighter text-neutral-200 opacity-60 mix-blend-multiply whitespace-nowrap">
+           <span className="font-display text-[22vw] uppercase tracking-tighter text-neutral-200 opacity-60 mix-blend-multiply whitespace-nowrap">
              ARSENAL
-           </h2>
+           </span>
         </div>
 
         {/* 3D Stacking Wrapper */}
@@ -620,7 +620,7 @@ export default function Home() {
             return (
               <div 
                 key={index} 
-                className="service-stack-card absolute inset-0 w-full h-full rounded-[40px] md:rounded-[60px] overflow-hidden shadow-2xl flex flex-col items-center justify-center p-8 md:p-16 border border-black/10" 
+                className="service-stack-card absolute inset-0 w-full h-full rounded-[24px] md:rounded-[60px] overflow-hidden shadow-2xl flex flex-col items-center justify-center p-6 md:p-16 border border-black/10" 
                 style={{ 
                   backgroundColor: isDark ? '#111' : '#fff', 
                   color: isDark ? '#fff' : '#111', 
@@ -632,7 +632,7 @@ export default function Home() {
                 
                 {/* Giant Faded Out Background Title inside Card */}
                 <div className="absolute inset-0 w-full h-full opacity-[0.03] pointer-events-none flex justify-center items-center overflow-hidden z-0" aria-hidden="true">
-                  <h2 className="font-display text-[40vw] whitespace-nowrap">{service.title}</h2>
+                  <span className="font-display text-[40vw] whitespace-nowrap">{service.title}</span>
                 </div>
                 
                 {/* Foreground Content */}
@@ -646,11 +646,11 @@ export default function Home() {
                   </div>
                   
                   <span className="font-sans text-xs md:text-sm uppercase tracking-[0.5em] mb-6 opacity-60">Phase 0{index + 1}</span>
-                  <h3 className="font-display text-5xl md:text-7xl lg:text-8xl uppercase tracking-tighter mb-8 text-center leading-[0.9]">
+                  <h3 className="font-display text-3xl sm:text-5xl md:text-7xl lg:text-8xl uppercase tracking-tighter mb-6 md:mb-8 text-center leading-[0.9]">
                     {service.title}
                   </h3>
                   
-                  <p className="font-sans text-lg md:text-2xl opacity-70 text-center leading-relaxed font-light max-w-2xl mx-auto">
+                  <p className="font-sans text-base md:text-2xl opacity-70 text-center leading-relaxed font-light max-w-2xl mx-auto">
                     {service.desc}
                   </p>
                 </div>
@@ -665,7 +665,7 @@ export default function Home() {
         <figure className="max-w-4xl mx-auto text-center relative">
           <span className="absolute -top-16 -left-8 text-9xl text-neutral-200 font-display opacity-50" aria-hidden="true">"</span>
           <blockquote>
-            <p className="font-display text-3xl md:text-5xl uppercase tracking-tight leading-tight relative z-10">
+            <p className="font-display text-2xl md:text-5xl uppercase tracking-tight leading-tight relative z-10">
               Programs must be written for people to read, and only incidentally for machines to execute.
             </p>
           </blockquote>
@@ -678,7 +678,7 @@ export default function Home() {
       {/* FAQ Section */}
       <section className="fade-up py-24 px-6 md:px-12 lg:px-24 bg-white" aria-label="Frequently asked questions">
         <div className="max-w-4xl mx-auto">
-          <h2 className="font-display text-5xl md:text-7xl uppercase tracking-tight mb-16 text-center">FAQ</h2>
+          <h2 className="font-display text-4xl md:text-7xl uppercase tracking-tight mb-10 md:mb-16 text-center">FAQ</h2>
           <div className="space-y-4">
             {faqs.map((faq, i) => (
               <FAQItem key={i} faq={faq} index={i} />
@@ -688,22 +688,11 @@ export default function Home() {
       </section>
 
       {/* Contact CTA */}
-      <section className="relative h-screen flex items-center justify-center overflow-hidden" aria-label="Contact call to action">
-        <div className="absolute inset-0 z-0">
-          <img
-            src="https://picsum.photos/seed/contactbg/1920/1080"
-            alt=""
-            width={1920}
-            height={1080}
-            loading="lazy"
-            decoding="async"
-            className="w-full h-full object-cover"
-          />
-          <div className="absolute inset-0 bg-black/60" />
-        </div>
+      <section className="relative h-[80vh] md:h-screen flex items-center justify-center overflow-hidden bg-[#111]" aria-label="Contact call to action">
+        <div className="absolute inset-0 z-0 bg-gradient-to-br from-neutral-900 via-neutral-800 to-black" />
 
-        <div className="relative z-10 text-center text-white px-4">
-          <h2 className="font-display text-6xl md:text-8xl lg:text-[10vw] uppercase tracking-tighter mb-8">
+        <div className="relative z-10 text-center text-white px-6">
+          <h2 className="font-display text-5xl sm:text-6xl md:text-8xl lg:text-[10vw] uppercase tracking-tighter mb-8">
             Let's Talk
           </h2>
           <Link

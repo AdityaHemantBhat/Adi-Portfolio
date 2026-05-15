@@ -6,82 +6,31 @@ export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const location = useLocation();
 
-  // ── "Crazy" Autonomous Scatter & Snap Looping Name Effect ──
+  // ── One-time name reveal on load ──
   const nameRef = useRef<HTMLAnchorElement>(null);
   const name = "ADITYA BHAT";
-  const [isHovered, setIsHovered] = useState(false);
+  const hasAnimated = useRef(false);
 
   useEffect(() => {
-    if (!nameRef.current) return;
-    
+    if (!nameRef.current || hasAnimated.current) return;
+    hasAnimated.current = true;
+
     const letters = nameRef.current.querySelectorAll('.name-letter');
-    let floatTweens: gsap.core.Tween[] = [];
-    let cycleTimeout: NodeJS.Timeout;
-
-    const startChaos = () => {
-      // Randomly scatter letters infinitely
-      letters.forEach((letter) => {
-        const dur = gsap.utils.random(1.5, 3);
-        const t = gsap.to(letter, {
-          x: () => gsap.utils.random(-25, 25),
-          y: () => gsap.utils.random(-20, 20),
-          rotationZ: () => gsap.utils.random(-35, 35),
-          rotationY: () => gsap.utils.random(-50, 50),
-          duration: dur,
-          ease: "sine.inOut",
-          repeat: -1,
-          yoyo: true,
-        });
-        floatTweens.push(t);
-      });
-      
-      // Wait 4 seconds of chaos before snapping together
-      cycleTimeout = setTimeout(pauseChaos, 4000);
-    };
-
-    const pauseChaos = () => {
-      // 1. Kill the infinite wobbles
-      floatTweens.forEach(t => t.kill());
-      floatTweens = [];
-      
-      // 2. Violently snap back to a perfect legible row
-      gsap.to(letters, {
-        x: 0,
+    
+    // Start hidden, then stagger-reveal each letter sliding up
+    gsap.fromTo(letters,
+      { y: 20, opacity: 0, rotationX: -90 },
+      {
         y: 0,
-        rotationZ: 0,
-        rotationY: 0,
+        opacity: 1,
+        rotationX: 0,
         duration: 0.8,
-        ease: "elastic.out(1.2, 0.4)",
-        stagger: 0.02
-      });
-
-      // 3. Wait 3 seconds holding the readable name before exploding again
-      cycleTimeout = setTimeout(startChaos, 1000);
-    };
-
-    if (!isHovered) {
-      // Begin the autonomous cycle
-      startChaos();
-    } else {
-      // Force instant perfect sync as long as cursor is hovering over the name
-      gsap.killTweensOf(letters);
-      gsap.to(letters, {
-        x: 0,
-        y: 0,
-        rotationZ: 0,
-        rotationY: 0,
-        duration: 0.8,
-        ease: "elastic.out(1.2, 0.4)",
-        stagger: 0.02
-      });
-    }
-
-    return () => {
-      // Complete robust cleanup prevents memory leaks and visual ghosting
-      floatTweens.forEach(t => t.kill());
-      clearTimeout(cycleTimeout);
-    };
-  }, [isHovered]);
+        ease: "power3.out",
+        stagger: 0.04,
+        delay: 3.2, // sync with loader exit
+      }
+    );
+  }, []);
 
   const links = [
     { name: 'Home', path: '/' },
@@ -93,12 +42,10 @@ export default function Navbar() {
     <>
       <nav className="fixed top-0 left-0 w-full z-50 px-6 py-6 md:px-12 md:py-8 flex justify-between items-center mix-blend-difference text-white" aria-label="Main navigation">
         
-        {/* Wild Floating Name Re-assembled On Hover */}
+        {/* Name with one-time reveal */}
         <Link 
           to="/" 
           ref={nameRef}
-          onMouseEnter={() => setIsHovered(true)}
-          onMouseLeave={() => setIsHovered(false)}
           className="font-display tracking-[0.1em] text-2xl md:text-3xl uppercase hover-target flex z-50 p-2 -m-2"
           style={{ perspective: '800px' }}
         >
@@ -106,7 +53,7 @@ export default function Navbar() {
             <span 
               key={i} 
               className="name-letter inline-block origin-center will-change-transform"
-              style={{ minWidth: char === ' ' ? '0.4em' : 'auto' }}
+              style={{ minWidth: char === ' ' ? '0.4em' : 'auto', opacity: 0 }}
             >
               {char}
             </span>

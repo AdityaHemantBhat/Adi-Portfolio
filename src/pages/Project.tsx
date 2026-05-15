@@ -20,18 +20,9 @@ export default function Project() {
   const currentIndex = projects.findIndex(p => p.id === id);
   const nextProject = projects[(currentIndex + 1) % projects.length];
 
-  if (!project) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
-        <div className="text-center">
-          <h1 className="font-display text-4xl mb-4">Project Not Found</h1>
-          <Link to="/lookbook" className="text-neutral-500 hover:text-black transition-colors underline">Back to Lookbook</Link>
-        </div>
-      </div>
-    );
-  }
-
   useEffect(() => {
+    if (!project) return;
+    
     const ctx = gsap.context(() => {
       gsap.utils.toArray('.reveal-img').forEach((img: any) => {
         gsap.fromTo(img, 
@@ -50,12 +41,23 @@ export default function Project() {
     }, containerRef);
 
     return () => ctx.revert();
-  }, []);
+  }, [project]);
+
+  if (!project) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <div className="text-center">
+          <h1 className="font-display text-4xl mb-4">Project Not Found</h1>
+          <Link to="/lookbook" className="text-neutral-500 hover:text-black transition-colors underline">Back to Lookbook</Link>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div ref={containerRef} className="min-h-screen bg-background">
       {/* Fullscreen Hero */}
-      <section className="relative h-screen w-full overflow-hidden" aria-label={`${project.title} project hero`}>
+      <section className="relative h-[70vh] md:h-screen w-full overflow-hidden" aria-label={`${project.title} project hero`}>
         <motion.div style={{ y }} className="absolute inset-0 z-0 scale-105">
           <img 
             src={project.mainImage} 
@@ -74,7 +76,7 @@ export default function Project() {
             initial={{ opacity: 0, y: 50 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1, delay: 0.5 }}
-            className="font-display text-6xl md:text-8xl lg:text-9xl uppercase tracking-tighter mb-6 leading-none"
+            className="font-display text-4xl sm:text-6xl md:text-8xl lg:text-9xl uppercase tracking-tighter mb-6 leading-none"
           >
             {project.title}
           </motion.h1>
@@ -82,7 +84,7 @@ export default function Project() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 1, delay: 0.8 }}
-            className="flex flex-wrap gap-x-12 gap-y-8 font-sans text-sm uppercase tracking-widest font-semibold"
+            className="flex flex-wrap gap-x-8 md:gap-x-12 gap-y-6 md:gap-y-8 font-sans text-sm uppercase tracking-widest font-semibold"
           >
             <div>
               <span className="text-neutral-400 block mb-1 text-xs">Year</span>
@@ -117,21 +119,21 @@ export default function Project() {
       </section>
 
       {/* Content */}
-      <section className="py-24 px-6 md:px-12 lg:px-24 max-w-7xl mx-auto">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 mb-24">
-          <h2 className="lg:col-span-4 font-display text-4xl uppercase tracking-tight">
+      <section className="py-16 md:py-24 px-6 md:px-12 lg:px-24 max-w-7xl mx-auto">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 md:gap-16 mb-16 md:mb-24">
+          <h2 className="lg:col-span-4 font-display text-3xl md:text-4xl uppercase tracking-tight">
             The Challenge
           </h2>
-          <div className="lg:col-span-8 font-sans text-xl text-neutral-800 leading-relaxed font-light">
+          <div className="lg:col-span-8 font-sans text-lg md:text-xl text-neutral-800 leading-relaxed font-light">
             {project.description}
           </div>
         </div>
 
-        <div className="space-y-32">
+        <div className="space-y-16 md:space-y-32">
           {project.galleryImages.map((img, index) => (
             <div 
               key={index} 
-              className={`w-full overflow-hidden rounded-2xl reveal-img shadow-2xl${index % 2 === 0 ? 'aspect-video' : 'aspect-[3/4] max-w-4xl mx-auto object-top'}`}
+              className={`w-full overflow-hidden rounded-xl md:rounded-2xl reveal-img shadow-2xl ${index % 2 === 0 ? 'aspect-video' : 'aspect-[3/4] max-w-4xl mx-auto object-top'}`}
             >
               <img 
                 src={img} 
@@ -148,9 +150,9 @@ export default function Project() {
       </section>
 
       {/* Next Project */}
-      <section className="py-48 bg-[#111] text-white text-center flex flex-col items-center justify-center" aria-label="Next project">
+      <section className="py-24 md:py-48 bg-[#111] text-white text-center flex flex-col items-center justify-center px-6" aria-label="Next project">
         <span className="font-sans text-sm uppercase tracking-widest text-neutral-500 mb-8 block">Next Project</span>
-        <Link to={`/project/${nextProject.id}`} className="font-display text-5xl md:text-8xl lg:text-9xl uppercase tracking-tighter hover-target hover:text-neutral-400 transition-colors px-12 block leading-none">
+        <Link to={`/project/${nextProject.id}`} className="font-display text-3xl sm:text-5xl md:text-8xl lg:text-9xl uppercase tracking-tighter hover-target hover:text-neutral-400 transition-colors px-4 md:px-12 block leading-none">
           {nextProject.title}
         </Link>
       </section>

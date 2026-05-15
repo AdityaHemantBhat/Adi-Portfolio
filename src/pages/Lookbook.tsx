@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { useRef, useEffect } from 'react';
 import { useProjectContext, ProjectData } from '../context/ProjectContext';
 import gsap from 'gsap';
-import ScrollTrigger from 'gsap/ScrollTrigger';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -75,20 +75,16 @@ export default function Lookbook() {
         <div ref={titleWrapperRef} className="relative z-20 w-full max-w-[90vw] flex flex-col items-center">
           
           <div className="overflow-hidden w-full flex justify-start pl-[5vw]">
-            <h1 className="hero-text-split font-hero text-[20vw] leading-[0.75] uppercase text-[#111] tracking-tighter">
+            <h1 className="hero-text-split font-hero text-[18vw] md:text-[20vw] leading-[0.75] uppercase text-[#111] tracking-tighter">
               Look
             </h1>
           </div>
 
-          <div className="hero-center-img relative z-10 w-[60vw] md:w-[40vw] max-w-[500px] aspect-[4/5] my-[-7vw] md:my-[-5vw] shadow-2xl">
-            <img 
-              src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=2400&auto=format&fit=crop" 
-              alt="Art direction showcase"
-              width={500}
-              height={625}
-              loading="eager"
-              decoding="async"
-              className="w-full h-full object-cover grayscale"
+          <div className="hero-center-img relative z-10 w-[70vw] md:w-[40vw] max-w-[500px] aspect-[4/5] my-[-7vw] md:my-[-5vw] shadow-2xl">
+            <div 
+              className="w-full h-full bg-gradient-to-br from-neutral-300 via-neutral-400 to-neutral-600 grayscale"
+              role="img"
+              aria-label="Art direction showcase"
             />
             <div className="absolute -right-12 top-1/2 -translate-y-1/2 rotate-90 origin-left hidden md:block">
               <span className="font-sans text-[10px] uppercase tracking-[0.4em] text-[#111] whitespace-nowrap">
@@ -98,9 +94,9 @@ export default function Lookbook() {
           </div>
 
           <div className="overflow-hidden w-full flex justify-end pr-[5vw] relative z-20">
-            <h1 className="hero-text-split font-hero text-[20vw] leading-[0.75] uppercase text-[#111] tracking-tighter" aria-hidden="true">
+            <span className="hero-text-split font-hero text-[18vw] md:text-[20vw] leading-[0.75] uppercase text-[#111] tracking-tighter" aria-hidden="true">
               Book
-            </h1>
+            </span>
           </div>
 
         </div>
@@ -119,7 +115,7 @@ export default function Lookbook() {
       </div>
 
       {/* ── Projects List ── */}
-      <div className="relative w-full py-40 px-6 md:px-12 lg:px-24 flex flex-col gap-40 md:gap-64">
+      <div className="relative w-full py-20 md:py-40 px-6 md:px-12 lg:px-24 flex flex-col gap-20 md:gap-64">
         
         {projects.map((project, i) => {
           const isEven = i % 2 === 0;
@@ -164,7 +160,7 @@ export default function Lookbook() {
                   </span>
                 </div>
 
-                <h2 className="font-display text-5xl md:text-7xl lg:text-8xl uppercase tracking-tighter leading-[0.9] mb-6">
+                <h2 className="font-display text-4xl sm:text-5xl md:text-7xl lg:text-8xl uppercase tracking-tighter leading-[0.9] mb-6">
                   {project.title.split(' ').map((word, wIdx) => (
                     <span key={wIdx} className="block overflow-hidden">
                       <span className="inline-block hover:italic transition-all duration-300 cursor-pointer">
@@ -218,7 +214,7 @@ export default function Lookbook() {
         <p className="font-sans text-xs uppercase tracking-[0.4em] mb-6 relative z-10">Convinced yet?</p>
         <Link 
           to="/contact" 
-          className="relative z-10 font-display text-5xl md:text-8xl uppercase tracking-tighter hover:italic transition-all duration-300 hover-target"
+          className="relative z-10 font-display text-4xl sm:text-5xl md:text-8xl uppercase tracking-tighter hover:italic transition-all duration-300 hover-target"
         >
           Start a project
         </Link>
