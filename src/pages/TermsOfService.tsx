@@ -21,7 +21,7 @@ export default function TermsOfService() {
   ];
 
   return (
-    <div className="min-h-screen bg-background pt-48 px-6 md:px-12 lg:px-24 pb-24">
+    <div className="min-h-svh bg-background pt-40 md:pt-48 px-6 md:px-12 lg:px-24 pb-[max(6rem,env(safe-area-inset-bottom))]">
       <div className="max-w-4xl mx-auto">
         <motion.h1 
           initial={{ opacity: 0, y: 50 }}

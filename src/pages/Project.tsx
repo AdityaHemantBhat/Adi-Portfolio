@@ -4,6 +4,8 @@ import { motion, useScroll, useTransform } from 'framer-motion';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useProjectContext } from '../context/ProjectContext';
+import MagneticButton from '../components/ui/MagneticButton';
+import Reveal from '../components/ui/Reveal';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -57,7 +59,7 @@ export default function Project() {
   return (
     <div ref={containerRef} className="min-h-screen bg-background">
       {/* Fullscreen Hero */}
-      <section className="relative h-[70vh] md:h-screen w-full overflow-hidden" aria-label={`${project.title} project hero`}>
+      <section className="relative h-[70svh] md:h-svh w-full overflow-hidden" aria-label={`${project.title} project hero`}>
         <motion.div style={{ y }} className="absolute inset-0 z-0 scale-105">
           <img 
             src={project.mainImage} 
@@ -124,9 +126,14 @@ export default function Project() {
           <h2 className="lg:col-span-4 font-display text-3xl md:text-4xl uppercase tracking-tight">
             The Challenge
           </h2>
-          <div className="lg:col-span-8 font-sans text-lg md:text-xl text-neutral-800 leading-relaxed font-light">
+          <Reveal
+            as="div"
+            direction="up"
+            blur={false}
+            className="lg:col-span-8 font-sans text-lg md:text-xl text-neutral-800 leading-relaxed font-light"
+          >
             {project.description}
-          </div>
+          </Reveal>
         </div>
 
         <div className="space-y-16 md:space-y-32">
@@ -152,9 +159,11 @@ export default function Project() {
       {/* Next Project */}
       <section className="py-24 md:py-48 bg-[#111] text-white text-center flex flex-col items-center justify-center px-6" aria-label="Next project">
         <span className="font-sans text-sm uppercase tracking-widest text-neutral-500 mb-8 block">Next Project</span>
-        <Link to={`/project/${nextProject.id}`} className="font-display text-3xl sm:text-5xl md:text-8xl lg:text-9xl uppercase tracking-tighter hover-target hover:text-neutral-400 transition-colors px-4 md:px-12 block leading-none">
-          {nextProject.title}
-        </Link>
+        <MagneticButton strength={0.12} className="inline-block">
+          <Link to={`/project/${nextProject.id}`} className="font-display text-3xl sm:text-5xl md:text-8xl lg:text-9xl uppercase tracking-tighter hover-target hover:text-neutral-400 transition-colors px-4 md:px-12 block leading-none [text-wrap:balance]">
+            {nextProject.title}
+          </Link>
+        </MagneticButton>
       </section>
     </div>
   );

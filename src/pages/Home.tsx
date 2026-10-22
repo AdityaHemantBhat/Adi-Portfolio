@@ -4,6 +4,16 @@ import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { Link } from 'react-router-dom';
 import { useProjectContext } from '../context/ProjectContext';
+import SvgMorph, { MORPH_BLOBS, MORPH_DIVIDER } from '../components/ui/SvgMorph';
+import AnimatedText from '../components/ui/AnimatedText';
+import ScrollText from '../components/ui/ScrollText';
+import MagneticButton from '../components/ui/MagneticButton';
+import ParticleField from '../components/ui/ParticleField';
+import AuroraBackground from '../components/ui/AuroraBackground';
+import RotatingWord from '../components/ui/RotatingWord';
+import TiltCard from '../components/ui/TiltCard';
+import CountUp from '../components/ui/CountUp';
+import Reveal from '../components/ui/Reveal';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -101,6 +111,17 @@ const faqs = [
   { q: 'Can you scale an existing application?', a: 'Absolutely. I specialize in refactoring legacy codebases, optimizing database queries, and setting up scalable cloud infrastructure.' },
 ];
 
+// Roles cycled in the hero greeting (the "new type animation").
+const heroRoles = ['Full Stack Developer', 'UI Engineer', 'Creative Coder', 'Problem Solver'];
+
+// Statistical proof strip — figures drawn from project content (not invented).
+const stats = [
+  { value: 5, suffix: '+', label: 'Years of experience' },
+  { value: 14, label: 'Technologies' },
+  { value: 4, label: 'Featured projects' },
+  { value: 100, suffix: '%', label: 'Accessibility-first builds' },
+];
+
 export default function Home() {
   const { projects } = useProjectContext();
   const containerRef = useRef<HTMLDivElement>(null);
@@ -127,7 +148,7 @@ export default function Home() {
     const rect = e.currentTarget.getBoundingClientRect();
     const centerX = rect.left + rect.width / 2;
     const centerY = rect.top + rect.height / 2;
-    
+
     // Calculate distance from center of the image (multiplied to create parallax limit)
     mouseX.set(e.clientX - centerX);
     mouseY.set(e.clientY - centerY);
@@ -143,13 +164,22 @@ export default function Home() {
     // ── Preloader Sync Mechanism ──
     // Determine dynamic GSAP delay by checking if the Global Loader is currently natively visible.
     const loaderExists = document.getElementById('global-preloader');
-    
-    // Start hero animation early so content is visible as curtains split open.
-    // Curtains begin at ~3s, fully open at ~3.9s. Starting at 2.5s means hero 
-    // content is already animating in when the split reveals the page.
-    const initialDelay = loaderExists ? 2.5 : 0.2; 
 
-    // GSAP animations for sections
+    // Start hero animation early so content is visible as curtains split open.
+    // Curtains begin at ~3s, fully open at ~3.9s. Starting at 2.5s means hero
+    // content is already animating in when the split reveals the page.
+    const initialDelay = loaderExists ? 2.5 : 0.2;
+
+    // Pins are desktop-only. matchMedia gates the three cinematic pinned/3D
+    // sequences (horizontal scroll, experience rise, services deck) to
+    // ≥768px + no reduced-motion. On phones these sections render their clean
+    // stacked / scrollable fallback markup (see JSX below) so nothing is
+    // pinned against a tall, desktop-sized scroll distance. `mm.revert()` in
+    // cleanup tears the tweens down when leaving the media range.
+    const mm = gsap.matchMedia();
+
+    // GSAP animations that run on ALL screen sizes (no pins):
+    // hero cinematic opening, universal `.fade-up` reveals, parallax images.
     const ctx = gsap.context(() => {
       // Dynamic delay based on whether the site is freshly launching vs routing
       const tl = gsap.timeline({ delay: initialDelay, defaults: { ease: 'power3.out' } });
@@ -207,6 +237,24 @@ export default function Home() {
         );
       });
 
+      // Parallax images
+      gsap.utils.toArray('.parallax-img').forEach((img: any) => {
+        gsap.to(img, {
+          yPercent: 20,
+          ease: 'none',
+          scrollTrigger: {
+            trigger: img.parentElement,
+            scrub: true,
+          },
+        });
+      });
+    }, containerRef);
+
+    // Desktop cinematic pins (≥768px, motion OK). Stopped on phones because a
+    // single-pin 3D scrub tuned for a large viewport clips / feels broken at
+    // mobile sizes. Selectors are unique site-wide, so document-level scoping
+    // is safe here.
+    mm.add('(min-width: 768px) and (prefers-reduced-motion: no-preference)', () => {
       // Horizontal scroll section
       const horizontalSection = document.querySelector('.horizontal-scroll');
       const horizontalContainer = document.querySelector('.horizontal-container');
@@ -237,7 +285,7 @@ export default function Home() {
       const expRevealWrapper = document.querySelector('.experience-reveal-wrapper');
       if (expRevealWrapper) {
         // Start the card pushed down just a little bit, tilted back, and rounded
-        gsap.set('.experience-inner', { 
+        gsap.set('.experience-inner', {
           y: '25vh',
           rotationX: 25,
           scale: 0.9,
@@ -268,40 +316,28 @@ export default function Home() {
           ease: 'power2.inOut',
           duration: 1
         })
-        // Step 2: Content softly glides up
-        .to('.exp-content-reveal', {
-          opacity: 1,
-          y: 0,
-          duration: 0.3,
-          ease: 'power2.out'
-        }, "-=0.3")
-        .to('.exp-item', {
-          opacity: 1,
-          y: 0,
-          duration: 0.4,
-          stagger: 0.1,
-          ease: 'power2.out'
-        }, "-=0.2");
+          // Step 2: Content softly glides up
+          .to('.exp-content-reveal', {
+            opacity: 1,
+            y: 0,
+            duration: 0.3,
+            ease: 'power2.out'
+          }, "-=0.3")
+          .to('.exp-item', {
+            opacity: 1,
+            y: 0,
+            duration: 0.4,
+            stagger: 0.1,
+            ease: 'power2.out'
+          }, "-=0.2");
       }
-
-      // Parallax images
-      gsap.utils.toArray('.parallax-img').forEach((img: any) => {
-        gsap.to(img, {
-          yPercent: 20,
-          ease: 'none',
-          scrollTrigger: {
-            trigger: img.parentElement,
-            scrub: true,
-          },
-        });
-      });
 
       // ── Cinematic 3D Deck Stack Reveal (Services) ──
       const stackWrapper = document.querySelector('.services-container');
       if (stackWrapper) {
         const cards = Array.from(document.querySelectorAll('.service-stack-card'));
         const overlays = Array.from(document.querySelectorAll('.service-stack-card .dark-overlay'));
-        
+
         // Initial setup: cards hidden deep below the fold in 3D perspective
         gsap.set(cards, { y: '120vh', rotationX: 15, scale: 0.8 });
 
@@ -317,44 +353,80 @@ export default function Home() {
 
         // 1. First card surfaces and flattens
         stackTl.to(cards[0], { y: '0vh', rotationX: 0, scale: 1, duration: 1.5, ease: 'power3.out' })
-               .to({}, { duration: 0.3 }) // Slight pause
+          .to({}, { duration: 0.3 }) // Slight pause
 
-        // 2. First card is pushed physically backward into Z-space; second card flies up over it
-               .to(cards[0], { scale: 0.9, y: '-5vh', duration: 1.5, ease: 'power3.inOut' })
-               .to(overlays[0], { opacity: 0.5, duration: 1.5, ease: 'power3.inOut' }, "<")
-               .to(cards[1], { y: '0vh', rotationX: 0, scale: 1, duration: 1.5, ease: 'power3.out' }, "<")
-               .to({}, { duration: 0.3 }) // Slight pause
+          // 2. First card is pushed physically backward into Z-space; second card flies up over it
+          .to(cards[0], { scale: 0.9, y: '-5vh', duration: 1.5, ease: 'power3.inOut' })
+          .to(overlays[0], { opacity: 0.5, duration: 1.5, ease: 'power3.inOut' }, "<")
+          .to(cards[1], { y: '0vh', rotationX: 0, scale: 1, duration: 1.5, ease: 'power3.out' }, "<")
+          .to({}, { duration: 0.3 }) // Slight pause
 
-        // 3. Both inner cards compress further backwards; third card flies up sealing the stack
-               .to(cards[0], { scale: 0.8, y: '-10vh', duration: 1.5, ease: 'power3.inOut' })
-               .to(overlays[0], { opacity: 0.7, duration: 1.5, ease: 'power3.inOut' }, "<")
-               .to(cards[1], { scale: 0.9, y: '-5vh', duration: 1.5, ease: 'power3.inOut' }, "<")
-               .to(overlays[1], { opacity: 0.5, duration: 1.5, ease: 'power3.inOut' }, "<")
-               .to(cards[2], { y: '0vh', rotationX: 0, scale: 1, duration: 1.5, ease: 'power3.out' }, "<")
-               
-               .to({}, { duration: 0.5 }); // Final hold let the user admire the stack before unpinning
+          // 3. Both inner cards compress further backwards; third card flies up sealing the stack
+          .to(cards[0], { scale: 0.8, y: '-10vh', duration: 1.5, ease: 'power3.inOut' })
+          .to(overlays[0], { opacity: 0.7, duration: 1.5, ease: 'power3.inOut' }, "<")
+          .to(cards[1], { scale: 0.9, y: '-5vh', duration: 1.5, ease: 'power3.inOut' }, "<")
+          .to(overlays[1], { opacity: 0.5, duration: 1.5, ease: 'power3.inOut' }, "<")
+          .to(cards[2], { y: '0vh', rotationX: 0, scale: 1, duration: 1.5, ease: 'power3.out' }, "<")
+
+          .to({}, { duration: 0.5 }); // Final hold let the user admire the stack before unpinning
       }
-    }, containerRef);
+    });
 
-    return () => ctx.revert();
+    // Mobile fallback (<768px): no pins. The featured-work strip becomes a
+    // native swipe (overflow-x-auto + snap in the JSX); experience + services
+    // become stacked sections. Just add a light scroll-reveal so the content
+    // still animates in.
+    mm.add('(max-width: 767.98px)', () => {
+      gsap.from('.exp-item', {
+        y: 30, opacity: 0, duration: 0.6, stagger: 0.08,
+        scrollTrigger: { trigger: '.experience-reveal-wrapper', start: 'top 80%' },
+      });
+      gsap.from('.service-stack-card', {
+        y: 30, opacity: 0, duration: 0.6, stagger: 0.15,
+        scrollTrigger: { trigger: '.services-container', start: 'top 80%' },
+      });
+    });
+
+    return () => {
+      mm.revert();
+      ctx.revert();
+    };
   }, []);
 
   return (
     <div ref={containerRef} className="w-full overflow-hidden">
       {/* Hero Section */}
-      <section className="relative min-h-screen w-full flex flex-col items-center justify-center overflow-hidden bg-[#f8f8f8]" aria-label="Hero introduction">
+      <section className="relative min-h-svh w-full flex flex-col items-center justify-center overflow-hidden bg-[#f8f8f8]" aria-label="Hero introduction">
+
+        {/* Soft grayscale aurora behind the hero (decorative) */}
+        <AuroraBackground className="absolute inset-0 z-0" />
+
+        {/* SVG-morphing grayscale blobs behind the hero (decorative) */}
+        <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden" aria-hidden="true">
+          <SvgMorph
+            className="absolute -top-1/4 -left-1/4 w-[70vw] h-[70vw]"
+            paths={MORPH_BLOBS} fill fillColor="#111" fillOpacity={0.07}
+            style={{ filter: 'blur(70px)' }}
+          />
+          <SvgMorph
+            className="absolute -bottom-1/4 -right-1/4 w-[60vw] h-[60vw]"
+            paths={MORPH_BLOBS} fill fillColor="#111" fillOpacity={0.05}
+            style={{ filter: 'blur(70px)' }}
+          />
+        </div>
 
         {/* Top Text */}
         <div className="hero-top-text absolute top-24 md:top-32 left-0 w-full flex justify-center z-20" style={{ opacity: 0 }}>
-          <p className="font-sans text-lg md:text-2xl text-neutral-800 font-light">
-            👋 , my name is Aditya and I am a Developer
+          <p className="font-sans text-base sm:text-lg md:text-2xl text-neutral-800 font-light px-6 text-center">
+            👋 my name is Aditya, I'm a{' '}
+            <RotatingWord words={heroRoles} className="font-medium text-black" />
           </p>
         </div>
 
         {/* Main Content Container */}
-        <div className="relative w-full max-w-[100vw] mx-auto min-h-[85vh] flex flex-col items-center justify-center mt-12 md:mt-16 h-full overflow-visible">
+        <div className="relative w-full max-w-[100vw] mx-auto min-h-[85svh] flex flex-col items-center justify-center mt-12 md:mt-16 h-full overflow-visible">
 
-          <div className="relative w-full h-full min-h-[600px] md:min-h-[800px] flex items-center justify-center">
+          <div className="relative w-full h-full min-h-[100svh] md:min-h-[800px] flex items-center justify-center">
 
             {/* LAYER 1: Background Layer (Centred) */}
             <div className="absolute inset-0 flex flex-col items-center justify-center z-0 pointer-events-none w-full">
@@ -362,7 +434,7 @@ export default function Home() {
 
                 {/* Webdesigner Background - Dual Layer */}
                 <div className="hero-text-1 relative w-full flex justify-center group" style={{ opacity: 0 }}>
-                  <h1 className="font-hero text-[14vw] md:text-[16vw] leading-[0.85] w-full text-center whitespace-nowrap pointer-events-auto cursor-none hover-target transition-opacity duration-500 subpixel-antialiased"
+                  <h1 className="font-hero text-[14vw] md:text-[16vw] max-[399px]:text-[12vw] leading-[0.85] w-full text-center whitespace-nowrap pointer-events-auto cursor-none hover-target transition-opacity duration-500 subpixel-antialiased"
                     style={{
                       WebkitTextFillColor: '#111',
                       opacity: hoveredText === 'software' ? 0 : 1,
@@ -374,7 +446,7 @@ export default function Home() {
                   >
                     Webdesigner
                   </h1>
-                  <span className="absolute inset-0 font-hero text-[14vw] md:text-[16vw] leading-[0.85] w-full text-center whitespace-nowrap pointer-events-none transition-opacity duration-500 subpixel-antialiased"
+                  <span className="absolute inset-0 font-hero text-[14vw] md:text-[16vw] max-[399px]:text-[12vw] leading-[0.85] w-full text-center whitespace-nowrap pointer-events-none transition-opacity duration-500 subpixel-antialiased"
                     style={{
                       WebkitTextFillColor: 'transparent',
                       WebkitTextStroke: '1.5px #111',
@@ -390,7 +462,7 @@ export default function Home() {
 
                 {/* FullStack Background - Dual Layer */}
                 <div className="hero-text-2 relative w-full flex justify-center mt-6 md:mt-8 group" style={{ opacity: 0 }}>
-                  <span className="font-hero text-[8vw] md:text-[10vw] leading-[0.85] text-center whitespace-nowrap pointer-events-auto cursor-none hover-target transition-opacity duration-500 subpixel-antialiased block"
+                  <span className="font-hero text-[8vw] md:text-[10vw] max-[399px]:text-[7vw] leading-[0.85] text-center whitespace-nowrap pointer-events-auto cursor-none hover-target transition-opacity duration-500 subpixel-antialiased block"
                     style={{
                       WebkitTextFillColor: '#111',
                       opacity: hoveredText === 'software' ? 1 : 0,
@@ -402,7 +474,7 @@ export default function Home() {
                   >
                     & Full Stack Developer
                   </span>
-                  <span className="absolute inset-0 font-hero text-[8vw] md:text-[10vw] leading-[0.85] text-center whitespace-nowrap pointer-events-none transition-opacity duration-500 subpixel-antialiased"
+                  <span className="absolute inset-0 font-hero text-[8vw] md:text-[10vw] max-[399px]:text-[7vw] leading-[0.85] text-center whitespace-nowrap pointer-events-none transition-opacity duration-500 subpixel-antialiased"
                     style={{
                       WebkitTextFillColor: 'transparent',
                       WebkitTextStroke: '1.5px #111',
@@ -426,58 +498,58 @@ export default function Home() {
 
                 {/* LAYER 2: THE HERO IMAGE */}
                 <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-                  <div 
+                  <div
                     className="w-[85vw] max-w-[650px] relative pointer-events-auto flex justify-center"
                     onMouseMove={handleImageMouseMove}
                     onMouseLeave={handleImageMouseLeave}
                   >
                     <img
-                    src="/images/profile.webp"
-                    alt="Aditya Bhat - Full Stack Developer"
-                    width={550}
-                    height={688}
+                      src="/images/profile.webp"
+                      alt="Aditya Bhat - Full Stack Developer"
+                      width={550}
+                      height={688}
                       fetchPriority="high"
                       className="w-full h-auto object-contain grayscale transition-all duration-700 hover:grayscale-0 cursor-none hover-target relative z-10"
                       style={{
-                      maskImage: 'linear-gradient(to bottom, black 85%, transparent 100%)',
-                      WebkitMaskImage: 'linear-gradient(to bottom, black 85%, transparent 100%)'
-                    }}
-                  />
+                        maskImage: 'linear-gradient(to bottom, black 85%, transparent 100%)',
+                        WebkitMaskImage: 'linear-gradient(to bottom, black 85%, transparent 100%)'
+                      }}
+                    />
+                  </div>
                 </div>
-              </div>
 
-              {/* LAYER 3: Masked Foreground Outline */}
-              <div
-                className="absolute inset-0 flex flex-col items-center justify-center z-20 pointer-events-none w-full"
-                style={{
-                  maskImage: 'url(/images/profile.webp)',
-                  WebkitMaskImage: 'url(/images/profile.webp)',
-                  maskSize: 'clamp(300px, 85vw, 550px) auto',
-                  WebkitMaskSize: 'clamp(300px, 85vw, 550px) auto',
-                  maskPosition: 'center center',
-                  maskRepeat: 'no-repeat'
-                }}
-                aria-hidden="true"
-              >
-                <motion.div style={{ x: maskTextX, y: maskTextY }} className="flex flex-col items-center justify-center w-full">
-                  <span className="hero-text-1 font-hero text-[14vw] md:text-[16vw] leading-[0.85] w-full text-center whitespace-nowrap text-transparent antialiased block"
-                    style={{
-                      WebkitTextStroke: '2px white',
-                      opacity: hoveredText === 'software' ? 0 : 1,
-                      transition: 'opacity 0.4s ease-out'
-                    }}>
-                    Webdesigner
-                  </span>
-                  <span className="hero-text-2 font-hero text-[8vw] md:text-[10vw] leading-[0.85] text-center mt-6 md:mt-8 whitespace-nowrap text-transparent antialiased block"
-                    style={{
-                      WebkitTextStroke: '2px white',
-                      opacity: hoveredText === 'software' ? 1 : 0,
-                      transition: 'opacity 0.4s ease-out'
-                    }}>
-                    & Full Stack Developer
-                  </span>
-                </motion.div>
-              </div>
+                {/* LAYER 3: Masked Foreground Outline */}
+                <div
+                  className="absolute inset-0 flex flex-col items-center justify-center z-20 pointer-events-none w-full"
+                  style={{
+                    maskImage: 'url(/images/profile.webp)',
+                    WebkitMaskImage: 'url(/images/profile.webp)',
+                    maskSize: 'clamp(300px, 85vw, 550px) auto',
+                    WebkitMaskSize: 'clamp(300px, 85vw, 550px) auto',
+                    maskPosition: 'center center',
+                    maskRepeat: 'no-repeat'
+                  }}
+                  aria-hidden="true"
+                >
+                  <motion.div style={{ x: maskTextX, y: maskTextY }} className="flex flex-col items-center justify-center w-full">
+                    <span className="hero-text-1 font-hero text-[14vw] md:text-[16vw] max-[399px]:text-[12vw] leading-[0.85] w-full text-center whitespace-nowrap text-transparent antialiased block"
+                      style={{
+                        WebkitTextStroke: '2px white',
+                        opacity: hoveredText === 'software' ? 0 : 1,
+                        transition: 'opacity 0.4s ease-out'
+                      }}>
+                      Webdesigner
+                    </span>
+                    <span className="hero-text-2 font-hero text-[8vw] md:text-[10vw] max-[399px]:text-[7vw] leading-[0.85] text-center mt-6 md:mt-8 whitespace-nowrap text-transparent antialiased block"
+                      style={{
+                        WebkitTextStroke: '2px white',
+                        opacity: hoveredText === 'software' ? 1 : 0,
+                        transition: 'opacity 0.4s ease-out'
+                      }}>
+                      & Full Stack Developer
+                    </span>
+                  </motion.div>
+                </div>
 
               </motion.div>
             </div>
@@ -486,26 +558,30 @@ export default function Home() {
         </div>
 
         {/* Bottom Elements */}
-        <div className="hero-bottom-text absolute bottom-8 md:bottom-12 left-6 md:left-12 z-20" style={{ opacity: 0 }}>
+        <div className="hero-bottom-text absolute bottom-[max(2rem,env(safe-area-inset-bottom))] md:bottom-12 left-6 md:left-12 z-20" style={{ opacity: 0 }}>
           <p className="font-sans text-xl md:text-3xl text-neutral-800 font-light">
             based in Goa, India.
           </p>
         </div>
 
-        <div className="hero-buttons absolute bottom-8 md:bottom-12 left-1/2 -translate-x-1/2 z-30 flex flex-col sm:flex-row gap-4 w-full sm:w-auto px-6 sm:px-0" style={{ opacity: 0 }}>
-          <Link to="/contact" className="bg-[#111] text-white px-8 py-4 font-sans text-sm text-center hover:bg-neutral-800 transition-colors w-full sm:w-auto rounded-sm">
-            Hire as Developer
-          </Link>
-          <Link to="/lookbook" className="bg-white text-[#111] border border-[#111] px-8 py-4 font-sans text-sm text-center hover:bg-neutral-100 transition-colors w-full sm:w-auto rounded-sm">
-            View Projects
-          </Link>
+        <div className="hero-buttons absolute bottom-[max(2rem,env(safe-area-inset-bottom))] md:bottom-12 left-1/2 -translate-x-1/2 z-30 flex flex-col sm:flex-row gap-4 w-full sm:w-auto px-6 sm:px-0" style={{ opacity: 0 }}>
+          <MagneticButton className="w-full sm:w-auto">
+            <Link to="/contact" className="block bg-[#111] text-white px-8 py-4 font-sans text-sm text-center hover:bg-neutral-800 transition-colors w-full sm:w-auto rounded-sm hover-target">
+              Hire as Developer
+            </Link>
+          </MagneticButton>
+          <MagneticButton className="w-full sm:w-auto">
+            <Link to="/lookbook" className="block bg-white text-[#111] border border-[#111] px-8 py-4 font-sans text-sm text-center hover:bg-neutral-100 transition-colors w-full sm:w-auto rounded-sm hover-target">
+              View Projects
+            </Link>
+          </MagneticButton>
         </div>
 
       </section>
 
       {/* Tech Stack Marquee */}
       <section className="fade-up py-10 md:py-14 border-y border-neutral-100 bg-white overflow-hidden relative" aria-label="Technology stack">
-        <div className="animate-marquee-slow flex whitespace-nowrap items-center">
+        <div className="animate-marquee-slow marquee-mask flex whitespace-nowrap items-center">
           {[...techStack, ...techStack].map((tech, index) => (
             <div key={index} className="mx-8 md:mx-16 flex items-center gap-3 md:gap-4 group hover:scale-105 transition-transform duration-500">
               <img
@@ -526,44 +602,54 @@ export default function Home() {
       </section>
 
       {/* Featured Work Strip (Horizontal Scroll) */}
-      <section className="horizontal-container h-screen bg-background relative flex items-center overflow-hidden" aria-label="Featured projects">
+      <section className="horizontal-container h-svh bg-background relative flex items-center overflow-x-auto no-scrollbar snap-x snap-mandatory md:overflow-x-hidden md:snap-none" aria-label="Featured projects">
         <div className="absolute top-12 left-12 z-10">
-          <h2 className="font-display text-4xl md:text-6xl uppercase tracking-tight">Featured Work</h2>
+          <AnimatedText
+            as="h2"
+            text="Featured Work"
+            mode="words"
+            className="font-display text-4xl md:text-6xl uppercase tracking-tight"
+          />
         </div>
         <div className="horizontal-scroll flex gap-4 md:gap-8 px-6 md:px-12 pt-28 md:pt-32 h-[75vh]">
           {projects.map((project) => (
-            <Link
+            <TiltCard
               key={project.id}
-              to={`/project/${project.id}`}
-              className="relative w-[80vw] md:w-[45vw] h-full flex-shrink-0 group overflow-hidden rounded-2xl cursor-none hover-target cursor-view"
+              className="relative w-[80vw] md:w-[45vw] h-full flex-shrink-0 snap-start"
+              maxTilt={6}
             >
-              <img
-                src={project.mainImage}
-                alt={project.title}
-                width={800}
-                height={600}
-                loading="lazy"
-                decoding="async"
-                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 object-top"
-              />
-              <div className="absolute inset-0 bg-black/20 group-hover:bg-black/60 transition-colors duration-500" />
-              <div className="absolute bottom-6 left-6 md:bottom-10 md:left-10 text-white translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
-                <span className="font-sans text-sm uppercase tracking-widest block mb-2 opacity-70">{project.category}</span>
-                <h3 className="font-display text-2xl md:text-5xl uppercase leading-none">{project.title}</h3>
-              </div>
-              <div className="absolute top-10 right-10 w-12 h-12 rounded-full border border-white/30 flex items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-opacity duration-500" aria-hidden="true">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                  <path d="M7 17L17 7M17 7H7M17 7V17" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                </svg>
-              </div>
-            </Link>
+              <Link
+                to={`/project/${project.id}`}
+                className="relative block w-full h-full group overflow-hidden rounded-2xl cursor-none hover-target cursor-view"
+              >
+                <img
+                  src={project.mainImage}
+                  alt={project.title}
+                  width={800}
+                  height={600}
+                  loading="lazy"
+                  decoding="async"
+                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 object-top"
+                />
+                <div className="absolute inset-0 bg-black/20 group-hover:bg-black/60 transition-colors duration-500" />
+                <div className="absolute bottom-6 left-6 md:bottom-10 md:left-10 text-white translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
+                  <span className="font-sans text-sm uppercase tracking-widest block mb-2 opacity-70">{project.category}</span>
+                  <h3 className="font-display text-2xl md:text-5xl uppercase leading-none">{project.title}</h3>
+                </div>
+                <div className="absolute top-10 right-10 w-12 h-12 rounded-full border border-white/30 flex items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-opacity duration-500" aria-hidden="true">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                    <path d="M7 17L17 7M17 7H7M17 7V17" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                </div>
+              </Link>
+            </TiltCard>
           ))}
         </div>
       </section>
 
       {/* Cinematic 3D Card Rise Experience Section */}
-      <section className="experience-reveal-wrapper relative w-full min-h-screen bg-background overflow-hidden" aria-label="Professional experience" style={{ perspective: '1500px' }}>
-        <div className="experience-inner absolute inset-0 bg-accent w-full h-full flex flex-col justify-center px-4 sm:px-6 md:px-12 lg:px-24 overflow-y-auto shadow-[0_-20px_50px_rgba(0,0,0,0.15)]">
+      <section className="experience-reveal-wrapper relative w-full min-h-svh bg-background overflow-hidden" aria-label="Professional experience" style={{ perspective: '1500px' }}>
+        <div className="experience-inner relative md:absolute md:inset-0 bg-accent w-full md:h-full flex flex-col justify-center px-4 sm:px-6 md:px-12 lg:px-24 py-20 md:py-0 overflow-y-auto shadow-[0_-20px_50px_rgba(0,0,0,0.15)]">
           <div className="max-w-7xl mx-auto w-full relative z-10 py-16 md:py-0">
             <div className="exp-content-reveal flex flex-col sm:flex-row justify-between items-start sm:items-end mb-6 md:mb-12 gap-2 sm:gap-4">
               <h2 className="font-display text-2xl sm:text-4xl md:text-7xl uppercase tracking-tighter text-white leading-[1.1]">Professional<br />Experience</h2>
@@ -604,52 +690,52 @@ export default function Home() {
       </section>
 
       {/* 3D Cinematic Deck Stack Services Section */}
-      <section className="services-container relative w-full h-screen bg-background overflow-hidden flex flex-col items-center justify-center" aria-label="Services offered">
-        
+      <section className="services-container relative w-full md:h-screen bg-background overflow-hidden flex flex-col items-center justify-center py-20 md:py-0" aria-label="Services offered">
+
         {/* Massive Background Intro Tile */}
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none select-none z-0" aria-hidden="true">
-           <span className="font-display text-[22vw] uppercase tracking-tighter text-neutral-200 opacity-60 mix-blend-multiply whitespace-nowrap">
-             ARSENAL
-           </span>
+          <span className="font-display text-[16vw] md:text-[22vw] uppercase tracking-tighter text-neutral-200 opacity-60 mix-blend-multiply whitespace-nowrap">
+            ARSENAL
+          </span>
         </div>
 
-        {/* 3D Stacking Wrapper */}
-        <div className="relative w-[90vw] md:w-[75vw] h-[80vh] md:h-[85vh] mt-[5vh] mx-auto z-10" style={{ perspective: '2000px' }}>
+        {/* 3D Stacking Wrapper (stacked list on mobile, pinned deck on desktop) */}
+        <div className="relative w-full md:w-[75vw] h-auto md:h-[85vh] mt-0 md:mt-[5vh] mx-auto z-10 flex flex-col md:block gap-6 md:gap-0 px-4 md:px-0" style={{ perspective: '2000px' }}>
           {services.map((service, index) => {
             const isDark = index % 2 === 0;
             return (
-              <div 
-                key={index} 
-                className="service-stack-card absolute inset-0 w-full h-full rounded-[24px] md:rounded-[60px] overflow-hidden shadow-2xl flex flex-col items-center justify-center p-6 md:p-16 border border-black/10" 
-                style={{ 
-                  backgroundColor: isDark ? '#111' : '#fff', 
-                  color: isDark ? '#fff' : '#111', 
-                  zIndex: index + 1 
+              <div
+                key={index}
+                className="service-stack-card relative md:absolute md:inset-0 w-full min-h-[60svh] md:h-full rounded-[24px] md:rounded-[60px] overflow-hidden shadow-2xl flex flex-col items-center justify-center p-6 md:p-16 border border-black/10"
+                style={{
+                  backgroundColor: isDark ? '#111' : '#fff',
+                  color: isDark ? '#fff' : '#111',
+                  zIndex: index + 1
                 }}
               >
                 {/* Dynamic Parallax Depth Shadow Overlay */}
                 <div className="dark-overlay absolute inset-0 bg-black z-20 pointer-events-none" style={{ opacity: 0 }} aria-hidden="true" />
-                
+
                 {/* Giant Faded Out Background Title inside Card */}
                 <div className="absolute inset-0 w-full h-full opacity-[0.03] pointer-events-none flex justify-center items-center overflow-hidden z-0" aria-hidden="true">
                   <span className="font-display text-[40vw] whitespace-nowrap">{service.title}</span>
                 </div>
-                
+
                 {/* Foreground Content */}
                 <div className="relative z-30 flex flex-col items-center w-full max-w-4xl mx-auto">
                   <div className="w-20 h-20 md:w-32 md:h-32 mb-8 md:mb-12 rounded-full border-2 border-current flex items-center justify-center shrink-0">
                     <div className="scale-125 md:scale-150 transform">
                       <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                        <path d="M12 4L12 20M20 12L4 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                        <path d="M12 4L12 20M20 12L4 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                       </svg>
                     </div>
                   </div>
-                  
+
                   <span className="font-sans text-xs md:text-sm uppercase tracking-[0.5em] mb-6 opacity-60">Phase 0{index + 1}</span>
                   <h3 className="font-display text-3xl sm:text-5xl md:text-7xl lg:text-8xl uppercase tracking-tighter mb-6 md:mb-8 text-center leading-[0.9]">
                     {service.title}
                   </h3>
-                  
+
                   <p className="font-sans text-base md:text-2xl opacity-70 text-center leading-relaxed font-light max-w-2xl mx-auto">
                     {service.desc}
                   </p>
@@ -660,14 +746,45 @@ export default function Home() {
         </div>
       </section>
 
+      {/* By the numbers */}
+      <section className="border-y border-neutral-100 bg-white py-16 md:py-24 px-6 md:px-12 lg:px-24" aria-label="Key numbers">
+        <div className="max-w-7xl mx-auto grid grid-cols-2 lg:grid-cols-4 gap-x-8 gap-y-12">
+          {stats.map((s, i) => (
+            <Reveal key={i} direction="up" delay={i * 0.08} className="flex flex-col items-center lg:items-start gap-3">
+              <CountUp
+                value={s.value}
+                prefix={s.prefix}
+                suffix={s.suffix}
+                className="font-display text-5xl md:text-7xl leading-none tracking-tight"
+              />
+              <span className="font-sans text-xs uppercase tracking-[0.3em] text-neutral-500 font-medium text-center lg:text-left">
+                {s.label}
+              </span>
+            </Reveal>
+          ))}
+        </div>
+      </section>
+
+      {/* Outline-morph divider */}
+      <div className="w-full px-6 md:px-12 bg-background py-8" aria-hidden="true">
+        <SvgMorph
+          className="w-full h-8 md:h-12 opacity-70"
+          paths={MORPH_DIVIDER}
+          fill={false} strokeColor="#111" strokeWidth={1.5}
+          viewBox="0 0 400 100" preserveAspectRatio="xMidYMid meet"
+          duration={7}
+        />
+      </div>
+
       {/* Testimonial */}
       <section className="fade-up py-32 px-6 md:px-12 bg-background flex justify-center items-center" aria-label="Quote">
         <figure className="max-w-4xl mx-auto text-center relative">
           <span className="absolute -top-16 -left-8 text-9xl text-neutral-200 font-display opacity-50" aria-hidden="true">"</span>
           <blockquote>
-            <p className="font-display text-2xl md:text-5xl uppercase tracking-tight leading-tight relative z-10">
-              Programs must be written for people to read, and only incidentally for machines to execute.
-            </p>
+            <ScrollText
+              text="Programs must be written for people to read, and only incidentally for machines to execute."
+              className="font-display text-2xl md:text-5xl uppercase tracking-tight leading-tight relative z-10"
+            />
           </blockquote>
           <figcaption className="font-sans text-sm uppercase tracking-widest mt-8 font-semibold">
             — Harold Abelson
@@ -678,7 +795,12 @@ export default function Home() {
       {/* FAQ Section */}
       <section className="fade-up py-24 px-6 md:px-12 lg:px-24 bg-white" aria-label="Frequently asked questions">
         <div className="max-w-4xl mx-auto">
-          <h2 className="font-display text-4xl md:text-7xl uppercase tracking-tight mb-10 md:mb-16 text-center">FAQ</h2>
+          <AnimatedText
+            as="h2"
+            text="FAQ"
+            mode="words"
+            className="font-display text-4xl md:text-7xl uppercase tracking-tight mb-10 md:mb-16 text-center"
+          />
           <div className="space-y-4">
             {faqs.map((faq, i) => (
               <FAQItem key={i} faq={faq} index={i} />
@@ -688,19 +810,35 @@ export default function Home() {
       </section>
 
       {/* Contact CTA */}
-      <section className="relative h-[80vh] md:h-screen flex items-center justify-center overflow-hidden bg-[#111]" aria-label="Contact call to action">
+      <section className="relative h-[80svh] md:h-svh flex items-center justify-center overflow-hidden bg-[#111]" aria-label="Contact call to action">
+        {/* Soft white aurora (dark mode), particles, morph blob — all behind text */}
+        <AuroraBackground className="absolute inset-0 z-0" mode="dark" />
+        <ParticleField className="absolute inset-0 w-full h-full z-0" color="#ffffff" />
         <div className="absolute inset-0 z-0 bg-gradient-to-br from-neutral-900 via-neutral-800 to-black" />
+        {/* SVG-morphing white blob, softly blurred */}
+        <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden" aria-hidden="true">
+          <SvgMorph
+            className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[55vw] h-[55vw]"
+            paths={MORPH_BLOBS} fill fillColor="#ffffff" fillOpacity={0.05}
+            style={{ filter: 'blur(60px)' }}
+          />
+        </div>
 
         <div className="relative z-10 text-center text-white px-6">
-          <h2 className="font-display text-5xl sm:text-6xl md:text-8xl lg:text-[10vw] uppercase tracking-tighter mb-8">
-            Let's Talk
-          </h2>
-          <Link
-            to="/contact"
-            className="inline-block font-sans text-sm uppercase tracking-widest font-semibold border border-white rounded-full px-8 py-4 hover-target hover:bg-white hover:text-black transition-colors duration-300"
-          >
-            Get in touch
-          </Link>
+          <AnimatedText
+            as="h2"
+            text="Let's Talk"
+            mode="words"
+            className="font-display text-5xl sm:text-6xl md:text-8xl lg:text-[10vw] uppercase tracking-tighter mb-8"
+          />
+          <MagneticButton strength={0.3} className="inline-block">
+            <Link
+              to="/contact"
+              className="inline-block font-sans text-sm uppercase tracking-widest font-semibold border border-white rounded-full px-8 py-4 hover-target hover:bg-white hover:text-black transition-colors duration-300"
+            >
+              Get in touch
+            </Link>
+          </MagneticButton>
         </div>
       </section>
     </div>

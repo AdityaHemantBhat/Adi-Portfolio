@@ -89,6 +89,43 @@
   color: transparent;
 }
 
+/* ── 2026 animation layer ─────────────────────────────────────────── */
+
+/* Aurora blobs — transform/opacity only (GPU-composited, no filter repaint per frame) */
+@keyframes aurora-drift {
+  0%   { transform: translate3d(-12%, -8%, 0) scale(1);    opacity: 0.5; }
+  33%  { transform: translate3d(10%, 6%, 0) scale(1.18);   opacity: 0.85; }
+  66%  { transform: translate3d(-6%, 12%, 0) scale(0.92);  opacity: 0.45; }
+  100% { transform: translate3d(-12%, -8%, 0) scale(1);    opacity: 0.5; }
+}
+@keyframes aurora-bob {
+  0%   { transform: translate3d(8%, 10%, 0) scale(1.1);    opacity: 0.4; }
+  50%  { transform: translate3d(-10%, -6%, 0) scale(0.94); opacity: 0.75; }
+  100% { transform: translate3d(8%, 10%, 0) scale(1.1);    opacity: 0.4; }
+}
+@keyframes aurora-sway {
+  0%   { transform: translate3d(0, 0, 0) scale(1);         opacity: 0.35; }
+  50%  { transform: translate3d(-14%, 8%, 0) scale(1.22); opacity: 0.7; }
+  100% { transform: translate3d(0, 0, 0) scale(1);         opacity: 0.35; }
+}
+.animate-aurora   { animation: aurora-drift 26s ease-in-out infinite; will-change: transform, opacity; }
+.animate-aurora-b { animation: aurora-bob   32s ease-in-out infinite; will-change: transform, opacity; }
+.animate-aurora-c { animation: aurora-sway  38s ease-in-out infinite; will-change: transform, opacity; }
+
+/* Film grain — step-translated oversized layer (compositor-safe, no background-position repaint) */
+@keyframes grain-shift {
+  0%   { transform: translate3d(0, 0, 0); }
+  50%  { transform: translate3d(-12px, 9px, 0); }
+  100% { transform: translate3d(4px, -6px, 0); }
+}
+.animate-grain { animation: grain-shift 0.9s steps(2) infinite; }
+
+/* Marquee horizontal edge-fade (matches the lookbook-mist mask idiom) */
+.marquee-mask {
+  mask-image: linear-gradient(to right, transparent, black 8%, black 92%, transparent);
+  -webkit-mask-image: linear-gradient(to right, transparent, black 8%, black 92%, transparent);
+}
+
 /* Lenis smooth scrolling */
 html.lenis, html.lenis body {
   height: auto;
@@ -155,6 +192,15 @@ html.lenis, html.lenis body {
 :focus-visible {
   outline: 2px solid #111;
   outline-offset: 2px;
+}
+
+/* Safe-area insets for notched / iPhone-home-indicator layouts.
+   Composable with Tailwind's own spacing: e.g. `py-6 pt-safe`. */
+@layer utilities {
+  .pt-safe { padding-top: env(safe-area-inset-top, 0px); }
+  .pb-safe { padding-bottom: env(safe-area-inset-bottom, 0px); }
+  .pl-safe { padding-left: env(safe-area-inset-left, 0px); }
+  .pr-safe { padding-right: env(safe-area-inset-right, 0px); }
 }
 
 /* Responsive container queries */

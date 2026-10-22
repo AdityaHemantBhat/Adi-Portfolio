@@ -1,0 +1,4 @@
+# Loaded by `node --env-file` in the test:render script so esbuild (via tsx)
+# applies the automatic JSX runtime to `src` + `test` files before any TS is
+# transformed. Cross-platform (Node's env-file, no shell-specific env syntax).
+TSX_TSCONFIG_PATH=./tsconfig.test.json

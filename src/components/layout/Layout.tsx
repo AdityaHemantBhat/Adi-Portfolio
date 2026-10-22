@@ -5,6 +5,8 @@ import Navbar from './Navbar';
 import Footer from './Footer';
 import CustomCursor from '../ui/CustomCursor';
 import BackToTop from '../ui/BackToTop';
+import ScrollProgress from '../ui/ScrollProgress';
+import GrainOverlay from '../ui/GrainOverlay';
 
 export default function Layout({ children }: { children: ReactNode }) {
     const lenisRef = useRef(null);
@@ -21,10 +23,14 @@ export default function Layout({ children }: { children: ReactNode }) {
 
     return (
         <ReactLenis root ref={lenisRef} options={{ lerp: 0.1, duration: 1.5, smoothWheel: true }}>
+            {/* ── Global 2026 layers (above opaque content) ── */}
+            <GrainOverlay />
+            <ScrollProgress />
+
             <a href="#main-content" className="skip-link">Skip to main content</a>
             <CustomCursor />
             <Navbar />
-            <main id="main-content" className="min-h-screen bg-background text-foreground selection:bg-accent selection:text-white">
+            <main id="main-content" className="relative z-[2] min-h-screen bg-background text-foreground selection:bg-accent selection:text-white">
                 {children}
             </main>
             <Footer />

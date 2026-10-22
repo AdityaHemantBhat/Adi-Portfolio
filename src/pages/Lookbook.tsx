@@ -4,6 +4,7 @@ import { useRef, useEffect } from 'react';
 import { useProjectContext, ProjectData } from '../context/ProjectContext';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import MagneticButton from '../components/ui/MagneticButton';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -75,7 +76,7 @@ export default function Lookbook() {
         <div ref={titleWrapperRef} className="relative z-20 w-full max-w-[90vw] flex flex-col items-center">
           
           <div className="overflow-hidden w-full flex justify-start pl-[5vw]">
-            <h1 className="hero-text-split font-hero text-[18vw] md:text-[20vw] leading-[0.75] uppercase text-[#111] tracking-tighter">
+            <h1 className="hero-text-split font-hero text-[18vw] md:text-[20vw] max-[399px]:text-[16vw] leading-[0.75] uppercase text-[#111] tracking-tighter">
               Look
             </h1>
           </div>
@@ -94,7 +95,7 @@ export default function Lookbook() {
           </div>
 
           <div className="overflow-hidden w-full flex justify-end pr-[5vw] relative z-20">
-            <span className="hero-text-split font-hero text-[18vw] md:text-[20vw] leading-[0.75] uppercase text-[#111] tracking-tighter" aria-hidden="true">
+            <span className="hero-text-split font-hero text-[18vw] md:text-[20vw] max-[399px]:text-[16vw] leading-[0.75] uppercase text-[#111] tracking-tighter" aria-hidden="true">
               Book
             </span>
           </div>
@@ -102,7 +103,7 @@ export default function Lookbook() {
         </div>
 
         {/* Scroll indicator */}
-        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-4" aria-hidden="true">
+        <div className="absolute bottom-[max(2rem,env(safe-area-inset-bottom))] left-1/2 -translate-x-1/2 flex flex-col items-center gap-4" aria-hidden="true">
           <span className="font-sans text-[9px] uppercase tracking-[0.3em] font-medium">Scroll to explore</span>
           <div className="w-[1px] h-12 bg-[#111] overflow-hidden">
             <motion.div 
@@ -198,7 +199,7 @@ export default function Lookbook() {
 
       {/* ── Footer / CTA ── */}
       <div className="w-full h-[50vh] flex flex-col items-center justify-center bg-[#111] text-[#f5f5f5] mt-20 relative overflow-hidden">
-        <div className="absolute top-1/2 -translate-y-1/2 whitespace-nowrap opacity-5 pointer-events-none select-none flex" aria-hidden="true">
+        <div className="absolute top-1/2 -translate-y-1/2 whitespace-nowrap opacity-5 pointer-events-none select-none flex marquee-mask" aria-hidden="true">
           {[...Array(2)].map((_, i) => (
             <motion.h2 
               key={i}
@@ -212,12 +213,14 @@ export default function Lookbook() {
         </div>
         
         <p className="font-sans text-xs uppercase tracking-[0.4em] mb-6 relative z-10">Convinced yet?</p>
-        <Link 
-          to="/contact" 
-          className="relative z-10 font-display text-4xl sm:text-5xl md:text-8xl uppercase tracking-tighter hover:italic transition-all duration-300 hover-target"
-        >
-          Start a project
-        </Link>
+        <MagneticButton strength={0.1} className="relative z-10">
+          <Link
+            to="/contact"
+            className="font-display text-4xl sm:text-5xl md:text-8xl uppercase tracking-tighter hover:italic transition-all duration-300 hover-target inline-block"
+          >
+            Start a project
+          </Link>
+        </MagneticButton>
       </div>
 
     </div>

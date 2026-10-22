@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 
 export default function Footer() {
     return (
-        <footer className="bg-accent text-white py-12 px-6 md:px-12 lg:px-24" role="contentinfo">
+        <footer className="relative z-[1] bg-accent text-white pt-12 pb-[max(3rem,env(safe-area-inset-bottom))] px-6 md:px-12 lg:px-24" role="contentinfo">
             <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-start md:items-center gap-8">
                 <div className="flex flex-col gap-4">
                     <Link to="/" className="font-display text-4xl md:text-6xl tracking-tight uppercase hover-target">

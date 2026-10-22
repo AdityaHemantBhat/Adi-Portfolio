@@ -40,7 +40,7 @@ export default function Navbar() {
 
   return (
     <>
-      <nav className="fixed top-0 left-0 w-full z-50 px-6 py-6 md:px-12 md:py-8 flex justify-between items-center mix-blend-difference text-white" aria-label="Main navigation">
+      <nav className="fixed top-0 left-0 w-full z-50 px-6 pt-[max(1.5rem,env(safe-area-inset-top))] pb-6 md:px-12 md:pt-[max(2rem,env(safe-area-inset-top))] md:pb-8 flex justify-between items-center mix-blend-difference text-white" aria-label="Main navigation">
         
         {/* Name with one-time reveal */}
         <Link 
@@ -111,7 +111,7 @@ export default function Navbar() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: '-100%' }}
             transition={{ duration: 0.6, ease: [0.76, 0, 0.24, 1] }}
-            className="fixed inset-0 z-40 bg-accent text-white flex flex-col justify-center items-center"
+            className="fixed inset-0 z-40 bg-accent text-white flex flex-col justify-center items-center pt-safe pb-safe"
           >
             <nav className="flex flex-col gap-8 text-center" aria-label="Mobile navigation">
               {links.map((link, i) => (

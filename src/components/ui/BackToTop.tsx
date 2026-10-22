@@ -37,7 +37,7 @@ export default function BackToTop() {
           exit={{ opacity: 0, y: 30, scale: 0.8 }}
           transition={{ duration: 0.5, ease: [0.76, 0, 0.24, 1] }}
           onClick={scrollToTop}
-          className="fixed bottom-8 right-8 md:bottom-12 md:right-12 z-50 w-14 h-14 md:w-16 md:h-16 bg-white text-black mix-blend-difference flex items-center justify-center rounded-full hover-target group overflow-hidden cursor-none outline-none focus:outline-none"
+          className="fixed bottom-[max(2rem,env(safe-area-inset-bottom))] right-[max(2rem,env(safe-area-inset-right))] md:bottom-12 md:right-12 z-50 w-14 h-14 md:w-16 md:h-16 bg-white text-black mix-blend-difference flex items-center justify-center rounded-full hover-target group overflow-hidden cursor-none outline-none focus:outline-none"
           aria-label="Scroll back to top"
         >
           {/* Default arrow */}

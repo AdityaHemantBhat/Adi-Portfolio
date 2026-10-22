@@ -1,6 +1,11 @@
 import { useState, useRef } from 'react';
 import { motion } from 'framer-motion';
 import emailjs from '@emailjs/browser';
+import AnimatedText from '../components/ui/AnimatedText';
+import MagneticButton from '../components/ui/MagneticButton';
+import SvgMorph, { MORPH_BLOBS } from '../components/ui/SvgMorph';
+import AuroraBackground from '../components/ui/AuroraBackground';
+import Reveal from '../components/ui/Reveal';
 
 export default function Contact() {
   const form = useRef<HTMLFormElement>(null);
@@ -34,27 +39,31 @@ export default function Contact() {
   };
 
   return (
-    <div className="min-h-screen bg-background pt-28 md:pt-32 px-6 md:px-12 lg:px-24 pb-24 flex items-center justify-center">
-      <div className="max-w-4xl w-full mx-auto grid grid-cols-1 lg:grid-cols-2 gap-10 md:gap-16">
+    <div className="relative overflow-hidden min-h-svh bg-background pt-28 md:pt-32 px-6 md:px-12 lg:px-24 pb-[max(6rem,env(safe-area-inset-bottom))] flex items-center justify-center">
+      {/* Soft grayscale aurora + morphing blob behind the contact panel */}
+      <AuroraBackground className="absolute inset-0 z-0" />
+      <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden" aria-hidden="true">
+        <SvgMorph
+          className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[80vmin] h-[80vmin]"
+          paths={MORPH_BLOBS} fill fillColor="#111" fillOpacity={0.05}
+          style={{ filter: 'blur(80px)' }}
+        />
+      </div>
+
+      <div className="relative z-10 max-w-4xl w-full mx-auto grid grid-cols-1 lg:grid-cols-2 gap-10 md:gap-16">
         <div>
-          <motion.h1 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
+          <AnimatedText
+            as="h1"
+            text="Hello."
+            mode="chars"
+            blur={false}
             className="font-display text-5xl sm:text-6xl md:text-8xl lg:text-9xl uppercase tracking-tighter mb-8"
-          >
-            Hello.
-          </motion.h1>
-          <motion.p 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.2 }}
-            className="font-sans text-lg text-neutral-600 mb-12"
-          >
+          />
+          <Reveal as="p" direction="up" delay={0.15} className="font-sans text-lg text-neutral-600 mb-12" blur={false}>
             I am always open to discussing full stack development work or partnership opportunities.
-          </motion.p>
-          
-          <address className="space-y-6 font-sans text-sm tracking-widest font-semibold not-italic">
+          </Reveal>
+
+          <Reveal as="address" direction="up" delay={0.25} className="space-y-6 font-sans text-sm tracking-widest font-semibold not-italic" blur={false}>
             <div>
               <span className="text-neutral-500 block mb-2 uppercase">Email</span>
               <a href="mailto:aditya.bhat.dev@gmail.com" className="hover-target hover:text-neutral-500 transition-colors">aditya.bhat.dev@gmail.com</a>
@@ -67,7 +76,7 @@ export default function Contact() {
               <span className="text-neutral-500 block mb-2 uppercase">Location</span>
               <p>Goa, India</p>
             </div>
-          </address>
+          </Reveal>
         </div>
 
         <motion.form 
@@ -114,13 +123,15 @@ export default function Contact() {
               className="w-full bg-transparent border-b border-neutral-300 py-4 font-sans text-sm focus:outline-none focus:border-accent transition-colors placeholder:text-neutral-400 placeholder:uppercase placeholder:tracking-widest resize-none"
             />
           </div>
-          <button 
-            type="submit" 
-            disabled={isSubmitting}
-            className="w-full bg-accent text-white font-sans text-sm uppercase tracking-widest font-semibold py-4 hover-target hover:bg-neutral-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            {isSubmitting ? 'Sending...' : 'Send Message'}
-          </button>
+          <MagneticButton className="w-full" strength={0.15}>
+            <button
+              type="submit"
+              disabled={isSubmitting}
+              className="w-full bg-accent text-white font-sans text-sm uppercase tracking-widest font-semibold py-4 hover-target hover:bg-neutral-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {isSubmitting ? 'Sending...' : 'Send Message'}
+            </button>
+          </MagneticButton>
           
           {/* Status Messages */}
           {status === 'success' && (

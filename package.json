@@ -8,7 +8,8 @@
     "build": "vite build",
     "preview": "vite preview",
     "clean": "rm -rf dist",
-    "lint": "tsc --noEmit"
+    "lint": "tsc --noEmit",
+    "test:render": "node --env-file=./.test-env --import tsx --import ./test/register-hooks.mjs --import ./test/setup-env.ts --test --test-force-exit --no-warnings test/render.test.tsx"
   },
   "dependencies": {
     "@emailjs/browser": "^4.4.1",
@@ -31,6 +32,7 @@
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
     "autoprefixer": "^10.4.21",
+    "jsdom": "^30.0.1",
     "tailwindcss": "^4.1.14",
     "terser": "^5.46.1",
     "tsx": "^4.21.0",
