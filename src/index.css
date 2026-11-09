@@ -19,6 +19,29 @@
 }
 
 @layer base {
+  html {
+    scrollbar-color: #171717 #e5e5e5;
+    scrollbar-width: thin;
+  }
+
+  html::-webkit-scrollbar {
+    width: 10px;
+  }
+
+  html::-webkit-scrollbar-track {
+    background: #e5e5e5;
+  }
+
+  html::-webkit-scrollbar-thumb {
+    background: #171717;
+    border: 2px solid #e5e5e5;
+    border-radius: 9999px;
+  }
+
+  html::-webkit-scrollbar-thumb:hover {
+    background: #555;
+  }
+
   body {
     @apply bg-background text-foreground font-sans antialiased overflow-x-hidden;
   }
