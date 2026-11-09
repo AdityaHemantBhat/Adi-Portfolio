@@ -1,57 +1,43 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
   <url>
-    <loc>https://adityahemantbhat.vercel.app/</loc>
-    <lastmod>2026-10-22</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>1.0</priority>
+    <loc>https://adityahemantbhat.com/</loc>
+    <lastmod>2026-11-09</lastmod>
   </url>
   <url>
-    <loc>https://adityahemantbhat.vercel.app/lookbook</loc>
-    <lastmod>2026-10-22</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
+    <loc>https://adityahemantbhat.com/lookbook</loc>
+    <lastmod>2026-11-09</lastmod>
   </url>
   <url>
-    <loc>https://adityahemantbhat.vercel.app/contact</loc>
-    <lastmod>2026-10-22</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
+    <loc>https://adityahemantbhat.com/contact</loc>
+    <lastmod>2026-11-09</lastmod>
   </url>
   <url>
-    <loc>https://adityahemantbhat.vercel.app/project/1</loc>
-    <lastmod>2026-10-22</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
+    <loc>https://adityahemantbhat.com/privacy</loc>
+    <lastmod>2026-11-09</lastmod>
   </url>
   <url>
-    <loc>https://adityahemantbhat.vercel.app/project/2</loc>
-    <lastmod>2026-10-22</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
+    <loc>https://adityahemantbhat.com/terms</loc>
+    <lastmod>2026-11-09</lastmod>
   </url>
   <url>
-    <loc>https://adityahemantbhat.vercel.app/project/3</loc>
-    <lastmod>2026-10-22</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
+    <loc>https://adityahemantbhat.com/project/1</loc>
+    <lastmod>2026-11-09</lastmod>
+    <image:image><image:loc>https://adityahemantbhat.com/images/Nirakar%20Education%20Society/NEC-Single.png</image:loc></image:image>
   </url>
   <url>
-    <loc>https://adityahemantbhat.vercel.app/project/4</loc>
-    <lastmod>2026-10-22</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
+    <loc>https://adityahemantbhat.com/project/2</loc>
+    <lastmod>2026-11-09</lastmod>
+    <image:image><image:loc>https://adityahemantbhat.com/images/TheDailyEdit/TheDailyEdit-Main.png</image:loc></image:image>
   </url>
   <url>
-    <loc>https://adityahemantbhat.vercel.app/privacy</loc>
-    <lastmod>2026-10-22</lastmod>
-    <changefreq>yearly</changefreq>
-    <priority>0.3</priority>
+    <loc>https://adityahemantbhat.com/project/3</loc>
+    <lastmod>2026-11-09</lastmod>
+    <image:image><image:loc>https://adityahemantbhat.com/images/Damodar%20Dental%20Care/Damodar-dental-care-front.png</image:loc></image:image>
   </url>
   <url>
-    <loc>https://adityahemantbhat.vercel.app/terms</loc>
-    <lastmod>2026-10-22</lastmod>
-    <changefreq>yearly</changefreq>
-    <priority>0.3</priority>
+    <loc>https://adityahemantbhat.com/project/4</loc>
+    <lastmod>2026-11-09</lastmod>
+    <image:image><image:loc>https://adityahemantbhat.com/images/Nizachem/Nizachem-Main.png</image:loc></image:image>
   </url>
 </urlset>

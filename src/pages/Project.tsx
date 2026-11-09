@@ -63,7 +63,7 @@ export default function Project() {
         <motion.div style={{ y }} className="absolute inset-0 z-0 scale-105">
           <img 
             src={project.mainImage} 
-            alt={project.title} 
+            alt={project.mainImageAlt ?? project.title}
             width={1920}
             height={1080}
             fetchPriority="high"
@@ -88,6 +88,10 @@ export default function Project() {
             transition={{ duration: 1, delay: 0.8 }}
             className="flex flex-wrap gap-x-8 md:gap-x-12 gap-y-6 md:gap-y-8 font-sans text-sm uppercase tracking-widest font-semibold"
           >
+            <div>
+              <span className="text-neutral-400 block mb-1 text-xs">Category</span>
+              {project.category}
+            </div>
             <div>
               <span className="text-neutral-400 block mb-1 text-xs">Year</span>
               {project.year}
@@ -122,9 +126,10 @@ export default function Project() {
 
       {/* Content */}
       <section className="py-16 md:py-24 px-6 md:px-12 lg:px-24 max-w-7xl mx-auto">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 md:gap-16 mb-16 md:mb-24">
+        {/* Overview Description */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 md:gap-16 mb-16 md:mb-20">
           <h2 className="lg:col-span-4 font-display text-3xl md:text-4xl uppercase tracking-tight">
-            The Challenge
+            Overview
           </h2>
           <Reveal
             as="div"
@@ -136,22 +141,79 @@ export default function Project() {
           </Reveal>
         </div>
 
+        {/* The Challenge Section */}
+        {project.challenge && (
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 md:gap-16 mb-16 md:mb-24 pb-12 border-b border-neutral-200">
+            <h2 className="lg:col-span-4 font-display text-3xl md:text-4xl uppercase tracking-tight text-[#111]">
+              The Challenge
+            </h2>
+            <div className="lg:col-span-8 space-y-6">
+              <Reveal
+                as="div"
+                direction="up"
+                blur={false}
+                className="font-sans text-lg md:text-xl text-neutral-700 leading-relaxed font-light"
+              >
+                {project.challenge}
+              </Reveal>
+              {project.technologies && project.technologies.length > 0 && (
+                <div className="pt-4 flex flex-wrap gap-2">
+                  {project.technologies.map((tech, idx) => (
+                    <span
+                      key={idx}
+                      className="px-3 py-1.5 bg-neutral-200/80 text-neutral-900 font-sans text-xs uppercase tracking-wider rounded-md font-medium"
+                    >
+                      {tech}
+                    </span>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
         <div className="space-y-16 md:space-y-32">
           {project.galleryImages.map((img, index) => (
-            <div 
-              key={index} 
-              className={`w-full overflow-hidden rounded-xl md:rounded-2xl reveal-img shadow-2xl ${index % 2 === 0 ? 'aspect-video' : 'aspect-[3/4] max-w-4xl mx-auto object-top'}`}
-            >
-              <img 
-                src={img} 
-                alt={`${project.title} detail ${index + 1}`} 
-                width={1200}
-                height={index % 2 === 0 ? 675 : 1600}
-                loading="lazy"
-                decoding="async"
-                className="w-full h-full object-cover"
-              />
-            </div>
+            project.galleryImageFits?.[index] === 'contain' ? (
+              <div key={index} className="reveal-img w-full overflow-hidden rounded-xl bg-neutral-100 shadow-2xl md:rounded-2xl">
+                <div className="flex items-center justify-between gap-4 border-b border-neutral-300 bg-white px-4 py-3 font-sans text-xs font-semibold uppercase tracking-widest text-neutral-700 md:px-6">
+                  <span>Full-page preview</span>
+                  <span className="text-right text-neutral-500">Scroll inside to explore</span>
+                </div>
+                <div
+                  className="project-image-scroller max-h-[78svh] overflow-y-auto overscroll-y-contain"
+                  data-lenis-prevent
+                  tabIndex={0}
+                  role="region"
+                  aria-label={`Scrollable full-page preview of ${project.title}. Use the arrow or page keys to explore.`}
+                >
+                  <img
+                    src={img}
+                    alt={project.galleryImageAlts?.[index] ?? `${project.title} detail ${index + 1}`}
+                    width={1200}
+                    height={675}
+                    loading="lazy"
+                    decoding="async"
+                    className="block h-auto w-full"
+                  />
+                </div>
+              </div>
+            ) : (
+              <div
+                key={index}
+                className={`reveal-img w-full overflow-hidden rounded-xl shadow-2xl md:rounded-2xl ${index % 2 === 0 ? 'aspect-video' : 'aspect-[3/4] max-w-4xl mx-auto object-top'}`}
+              >
+                <img
+                  src={img}
+                  alt={project.galleryImageAlts?.[index] ?? `${project.title} detail ${index + 1}`}
+                  width={1200}
+                  height={index % 2 === 0 ? 675 : 1600}
+                  loading="lazy"
+                  decoding="async"
+                  className="h-full w-full object-cover"
+                />
+              </div>
+            )
           ))}
         </div>
       </section>

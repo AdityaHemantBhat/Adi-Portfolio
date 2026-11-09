@@ -116,7 +116,7 @@ const heroRoles = ['Full Stack Developer', 'UI Engineer', 'Creative Coder', 'Pro
 
 // Statistical proof strip — figures drawn from project content (not invented).
 const stats = [
-  { value: 5, suffix: '+', label: 'Years of experience' },
+  { value: 2, suffix: '+', label: 'Years of experience' },
   { value: 14, label: 'Technologies' },
   { value: 4, label: 'Featured projects' },
   { value: 100, suffix: '%', label: 'Accessibility-first builds' },
@@ -165,10 +165,9 @@ export default function Home() {
     // Determine dynamic GSAP delay by checking if the Global Loader is currently natively visible.
     const loaderExists = document.getElementById('global-preloader');
 
-    // Start hero animation early so content is visible as curtains split open.
-    // Curtains begin at ~3s, fully open at ~3.9s. Starting at 2.5s means hero
-    // content is already animating in when the split reveals the page.
-    const initialDelay = loaderExists ? 2.5 : 0.2;
+    // Hero content prepares and animates inside behind the shutters,
+    // ready for when the 100% split occurs.
+    const initialDelay = loaderExists ? 1.0 : 0.1;
 
     // Pins are desktop-only. matchMedia gates the three cinematic pinned/3D
     // sequences (horizontal scroll, experience rise, services deck) to
@@ -415,8 +414,50 @@ export default function Home() {
           />
         </div>
 
+        <div className="relative z-10 flex min-h-svh w-full flex-col items-center justify-center gap-5 px-5 pb-28 pt-28 text-center sm:gap-6 sm:px-8 sm:pt-32 lg:hidden">
+          <p className="font-sans text-sm font-light text-neutral-700 sm:text-base">
+            Hi, I’m Aditya — <RotatingWord words={heroRoles} className="font-medium text-black" />
+          </p>
+          <div className="w-full">
+            <h1 className="font-hero text-[clamp(3.5rem,12vw,6.5rem)] leading-[0.85] tracking-tight text-[#111]">
+              Webdesigner
+            </h1>
+            <p className="mx-auto mt-3 max-w-[18ch] font-hero text-[clamp(1.75rem,6.5vw,3rem)] leading-[0.95] text-neutral-700 sm:mt-4">
+              &amp; Full Stack Developer
+            </p>
+          </div>
+          <img
+            src="/images/profile.webp"
+            alt="Aditya Bhat - Full Stack Developer"
+            width={550}
+            height={688}
+            fetchPriority="high"
+            decoding="async"
+            className="h-[34svh] max-h-[340px] w-auto max-w-[76vw] object-contain object-bottom grayscale sm:h-[39svh] sm:max-h-[400px]"
+            style={{
+              maskImage: 'linear-gradient(to bottom, black 72%, rgba(0, 0, 0, 0.75) 82%, transparent 100%)',
+              WebkitMaskImage: 'linear-gradient(to bottom, black 72%, rgba(0, 0, 0, 0.75) 82%, transparent 100%)',
+            }}
+          />
+          <p className="font-sans text-sm text-neutral-600 sm:text-base">Based in Goa, India.</p>
+          <div className="flex w-full max-w-md flex-col gap-3 sm:max-w-xl sm:flex-row sm:justify-center">
+            <Link
+              to="/contact"
+              className="flex min-h-12 flex-1 items-center justify-center rounded-sm bg-[#111] px-6 py-3 font-sans text-sm font-medium text-white transition-colors hover:bg-neutral-800"
+            >
+              Hire as Developer
+            </Link>
+            <Link
+              to="/lookbook"
+              className="flex min-h-12 flex-1 items-center justify-center rounded-sm border border-[#111] bg-white px-6 py-3 font-sans text-sm font-medium text-[#111] transition-colors hover:bg-neutral-100"
+            >
+              View Projects
+            </Link>
+          </div>
+        </div>
+
         {/* Top Text */}
-        <div className="hero-top-text absolute top-24 md:top-32 left-0 w-full flex justify-center z-20" style={{ opacity: 0 }}>
+        <div className="hero-top-text absolute top-24 left-0 hidden w-full justify-center z-20 lg:top-28 lg:flex xl:top-32" style={{ opacity: 0 }}>
           <p className="font-sans text-base sm:text-lg md:text-2xl text-neutral-800 font-light px-6 text-center">
             👋 my name is Aditya, I'm a{' '}
             <RotatingWord words={heroRoles} className="font-medium text-black" />
@@ -424,7 +465,7 @@ export default function Home() {
         </div>
 
         {/* Main Content Container */}
-        <div className="relative w-full max-w-[100vw] mx-auto min-h-[85svh] flex flex-col items-center justify-center mt-12 md:mt-16 h-full overflow-visible">
+        <div className="relative mt-12 hidden h-full min-h-[85svh] w-full max-w-[100vw] flex-col items-center justify-center overflow-visible mx-auto md:mt-16 lg:flex">
 
           <div className="relative w-full h-full min-h-[100svh] md:min-h-[800px] flex items-center justify-center">
 
@@ -434,7 +475,7 @@ export default function Home() {
 
                 {/* Webdesigner Background - Dual Layer */}
                 <div className="hero-text-1 relative w-full flex justify-center group" style={{ opacity: 0 }}>
-                  <h1 className="font-hero text-[14vw] md:text-[16vw] max-[399px]:text-[12vw] leading-[0.85] w-full text-center whitespace-nowrap pointer-events-auto cursor-none hover-target transition-opacity duration-500 subpixel-antialiased"
+                  <h1 className="font-hero text-[14vw] md:text-[16vw] lg:text-[16vw] max-[399px]:text-[12vw] leading-[0.85] w-full text-center whitespace-nowrap pointer-events-auto cursor-none hover-target transition-opacity duration-500 subpixel-antialiased"
                     style={{
                       WebkitTextFillColor: '#111',
                       opacity: hoveredText === 'software' ? 0 : 1,
@@ -446,7 +487,7 @@ export default function Home() {
                   >
                     Webdesigner
                   </h1>
-                  <span className="absolute inset-0 font-hero text-[14vw] md:text-[16vw] max-[399px]:text-[12vw] leading-[0.85] w-full text-center whitespace-nowrap pointer-events-none transition-opacity duration-500 subpixel-antialiased"
+                  <span className="absolute inset-0 font-hero text-[14vw] md:text-[16vw] lg:text-[16vw] max-[399px]:text-[12vw] leading-[0.85] w-full text-center whitespace-nowrap pointer-events-none transition-opacity duration-500 subpixel-antialiased"
                     style={{
                       WebkitTextFillColor: 'transparent',
                       WebkitTextStroke: '1.5px #111',
@@ -462,7 +503,7 @@ export default function Home() {
 
                 {/* FullStack Background - Dual Layer */}
                 <div className="hero-text-2 relative w-full flex justify-center mt-6 md:mt-8 group" style={{ opacity: 0 }}>
-                  <span className="font-hero text-[8vw] md:text-[10vw] max-[399px]:text-[7vw] leading-[0.85] text-center whitespace-nowrap pointer-events-auto cursor-none hover-target transition-opacity duration-500 subpixel-antialiased block"
+                  <span className="font-hero text-[8vw] md:text-[10vw] lg:text-[10vw] max-[399px]:text-[7vw] leading-[0.85] text-center whitespace-nowrap pointer-events-auto cursor-none hover-target transition-opacity duration-500 subpixel-antialiased block"
                     style={{
                       WebkitTextFillColor: '#111',
                       opacity: hoveredText === 'software' ? 1 : 0,
@@ -474,7 +515,7 @@ export default function Home() {
                   >
                     & Full Stack Developer
                   </span>
-                  <span className="absolute inset-0 font-hero text-[8vw] md:text-[10vw] max-[399px]:text-[7vw] leading-[0.85] text-center whitespace-nowrap pointer-events-none transition-opacity duration-500 subpixel-antialiased"
+                  <span className="absolute inset-0 font-hero text-[8vw] md:text-[10vw] lg:text-[10vw] max-[399px]:text-[7vw] leading-[0.85] text-center whitespace-nowrap pointer-events-none transition-opacity duration-500 subpixel-antialiased"
                     style={{
                       WebkitTextFillColor: 'transparent',
                       WebkitTextStroke: '1.5px #111',
@@ -532,7 +573,7 @@ export default function Home() {
                   aria-hidden="true"
                 >
                   <motion.div style={{ x: maskTextX, y: maskTextY }} className="flex flex-col items-center justify-center w-full">
-                    <span className="hero-text-1 font-hero text-[14vw] md:text-[16vw] max-[399px]:text-[12vw] leading-[0.85] w-full text-center whitespace-nowrap text-transparent antialiased block"
+                    <span className="hero-text-1 font-hero text-[14vw] md:text-[16vw] lg:text-[16vw] max-[399px]:text-[12vw] leading-[0.85] w-full text-center whitespace-nowrap text-transparent antialiased block"
                       style={{
                         WebkitTextStroke: '2px white',
                         opacity: hoveredText === 'software' ? 0 : 1,
@@ -540,7 +581,7 @@ export default function Home() {
                       }}>
                       Webdesigner
                     </span>
-                    <span className="hero-text-2 font-hero text-[8vw] md:text-[10vw] max-[399px]:text-[7vw] leading-[0.85] text-center mt-6 md:mt-8 whitespace-nowrap text-transparent antialiased block"
+                    <span className="hero-text-2 font-hero text-[8vw] md:text-[10vw] lg:text-[10vw] max-[399px]:text-[7vw] leading-[0.85] text-center mt-6 md:mt-8 whitespace-nowrap text-transparent antialiased block"
                       style={{
                         WebkitTextStroke: '2px white',
                         opacity: hoveredText === 'software' ? 1 : 0,
@@ -558,13 +599,13 @@ export default function Home() {
         </div>
 
         {/* Bottom Elements */}
-        <div className="hero-bottom-text absolute bottom-[max(2rem,env(safe-area-inset-bottom))] md:bottom-12 left-6 md:left-12 z-20" style={{ opacity: 0 }}>
-          <p className="font-sans text-xl md:text-3xl text-neutral-800 font-light">
+        <div className="hero-bottom-text absolute bottom-[max(2rem,env(safe-area-inset-bottom))] left-6 z-20 hidden lg:bottom-12 lg:left-8 lg:block xl:left-12" style={{ opacity: 0 }}>
+          <p className="font-sans text-xl font-light text-neutral-800 xl:text-3xl">
             based in Goa, India.
           </p>
         </div>
 
-        <div className="hero-buttons absolute bottom-[max(2rem,env(safe-area-inset-bottom))] md:bottom-12 left-1/2 -translate-x-1/2 z-30 flex flex-col sm:flex-row gap-4 w-full sm:w-auto px-6 sm:px-0" style={{ opacity: 0 }}>
+        <div className="hero-buttons absolute bottom-[max(2rem,env(safe-area-inset-bottom))] left-1/2 z-30 hidden w-full -translate-x-1/2 flex-col gap-4 px-6 sm:w-auto sm:flex-row sm:px-0 lg:bottom-12 lg:flex" style={{ opacity: 0 }}>
           <MagneticButton className="w-full sm:w-auto">
             <Link to="/contact" className="block bg-[#111] text-white px-8 py-4 font-sans text-sm text-center hover:bg-neutral-800 transition-colors w-full sm:w-auto rounded-sm hover-target">
               Hire as Developer
@@ -624,7 +665,7 @@ export default function Home() {
               >
                 <img
                   src={project.mainImage}
-                  alt={project.title}
+                  alt={project.mainImageAlt ?? project.title}
                   width={800}
                   height={600}
                   loading="lazy"

@@ -19,7 +19,8 @@ import React, { act } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 import { MemoryRouter, Routes, Route } from 'react-router-dom';
 
-import { ProjectProvider } from '../src/context/ProjectContext';
+import { ProjectProvider, projects } from '../src/context/ProjectContext';
+import { getPageMetadata } from '../src/lib/seo';
 
 import SvgMorph, { MORPH_BLOBS, MORPH_DIVIDER } from '../src/components/ui/SvgMorph';
 import AnimatedText from '../src/components/ui/AnimatedText';
@@ -95,7 +96,7 @@ describe('2026 animation primitives', () => {
   });
 
   it('ScrollText renders a typed element containing the words', async () => {
-    const { $, text, cleanup } = await mount(
+    const { $, $$, text, cleanup } = await mount(
       <ScrollText text="design engineering delivery" as="p" />,
     );
     assert.ok($('p'), 'renders a <p>');
@@ -177,6 +178,25 @@ describe('2026 animation primitives', () => {
   });
 });
 
+describe('route SEO metadata', () => {
+  it('creates distinct canonical metadata for every project', () => {
+    for (const project of projects) {
+      const metadata = getPageMetadata(`/project/${project.id}`, projects);
+      assert.match(metadata.title, new RegExp(project.title));
+      assert.equal(metadata.path, `/project/${project.id}`);
+      assert.equal(metadata.robots, 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1');
+      assert.equal(metadata.structuredData.name, project.title);
+    }
+  });
+
+  it('marks unknown routes noindex and preserves their path', () => {
+    const metadata = getPageMetadata('/not-a-page', projects);
+    assert.equal(metadata.path, '/not-a-page');
+    assert.equal(metadata.robots, 'noindex, follow');
+    assert.equal(metadata.structuredData.url, 'https://adityahemantbhat.com/not-a-page');
+  });
+});
+
 describe('page integration mounts', () => {
   it('Home mounts inside Layout (Lenis + global layers) with all effects present', async () => {
     const { $, $$, text, cleanup } = await mount(
@@ -195,6 +215,7 @@ describe('page integration mounts', () => {
 
     // Global layers from Layout.
     assert.ok($('div[class*="z-[70]"]'), 'ScrollProgress bar present');
+    assert.ok($('a[aria-label^="Chat with Aditya on WhatsApp"]'), 'site-wide WhatsApp button present');
     const hasGrain = Array.from($$('div')).some(
       (d) => (d as HTMLElement).style.backgroundImage.includes('data:image/svg+xml'),
     );
@@ -203,6 +224,18 @@ describe('page integration mounts', () => {
     // Home's own effect layers: particle canvas + SVG morph path.
     assert.ok($('canvas'), 'ParticleField canvas present (Let\'s Talk CTA)');
     assert.ok($('svg path'), 'SvgMorph path present (hero/body blobs)');
+    assert.ok($('[class*="lg:hidden"] h1'), 'mobile hero headline is present');
+    const mobilePortrait = $('[class*="lg:hidden"] img[src="/images/profile.webp"]');
+    assert.ok(mobilePortrait, 'mobile hero portrait is present');
+    assert.match(
+      mobilePortrait!.getAttribute('style') ?? '',
+      /linear-gradient\(black 72%, rgba\(0, 0, 0, 0\.75\) 82%, transparent 100%\)/,
+      'fades the mobile portrait bottom into the hero background',
+    );
+    assert.ok($('[class*="lg:hidden"] a[href="/contact"]'), 'mobile contact action is present');
+    assert.ok($('.hero-top-text[class*="lg:flex"]'), 'desktop-style hero is enabled at 1024px and wider');
+    assert.ok($('[aria-label="Main navigation"] [class*="lg:flex"]'), 'desktop navigation is enabled at 1024px and wider');
+    assert.ok($('.hero-bottom-text[class*="lg:block"]'), 'desktop location label stays with the desktop hero');
 
     await cleanup();
   });
@@ -220,13 +253,15 @@ describe('page integration mounts', () => {
     assert.ok(heading, 'AnimatedText heading "Hello." present');
     assert.ok($('svg path'), 'morph blob present');
     assert.ok($('button[type="submit"]'), 'submit button present');
+    assert.ok($('input#coupon-code'), 'coupon code input present');
+    assert.ok($('a[href*="wa.me/919529644737"]'), 'WhatsApp contact link is present');
     assert.match(text, /aditya\.bhat\.dev@gmail\.com/, 'email address renders');
 
     await cleanup();
   });
 
-  it('Project mounts with reveal blocks and the magnetic next-project link', async () => {
-    const { $, text, cleanup } = await mount(
+  it('Nirakar project shows its photos, updated links, and next-project link', async () => {
+    const { $, $$, text, cleanup } = await mount(
       <MemoryRouter initialEntries={['/project/1']}>
         <ProjectProvider>
           {/* Tools/instruments for loading as a lifted `fixture`:
@@ -238,11 +273,92 @@ describe('page integration mounts', () => {
       </MemoryRouter>,
     );
 
-    assert.ok($('[class*="reveal-img"]'), 'gallery reveal blocks present');
-    // Project 1's next project is id "2" → "Customer Relationship Management (CRM)".
+    const galleryImages = $$('[class*="reveal-img"] img');
+    assert.equal(galleryImages.length, 1, 'renders the Nirakar full-page website screenshot');
+    assert.equal(
+      galleryImages[0].getAttribute('src'),
+      '/images/Nirakar%20Education%20Society/Nirakar-Education-Society.png',
+      'renders the full-page screenshot from the Nirakar Education Society folder',
+    );
+    assert.equal(
+      galleryImages[0].getAttribute('alt'),
+      'Full-page screenshot of the Shri Nirakar Education Society website',
+      'describes the website screenshot',
+    );
+    const previewScroller = $('[data-lenis-prevent][role="region"]');
+    assert.ok(previewScroller, 'renders an internal scroll area for the full-page preview');
+    assert.equal(previewScroller!.getAttribute('tabindex'), '0', 'makes the preview keyboard-scrollable');
+    assert.equal(previewScroller!.contains(galleryImages[0]), true, 'places the full-size screenshot inside the scroll area');
+    assert.ok($('img[src="/images/Nirakar%20Education%20Society/NEC-Single.png"]'), 'uses the folder screenshot as the project hero');
+    assert.ok($('a[href="https://nirakar-education-society.vercel.app/"]'), 'links to the live Vercel site');
+    assert.ok($('a[href="https://github.com/AdityaHemantBhat"]'), 'links to the provided GitHub profile');
+    // Project 1's next project is id "2" → "The Daily Edit".
     assert.match(text, /Next Project/);
-    assert.match(text, /CRM|Customer Relationship/);
+    assert.match(text, /The Daily Edit/);
 
     await cleanup();
+  });
+
+  it('Daily Edit, Damodar Dental Care, and Nizachem use scrollable full-page previews', async () => {
+    const previews = [
+      {
+        id: '2',
+        title: 'The Daily Edit',
+        image: '/images/TheDailyEdit/TheDailyEdit-Fullscreen.png',
+        hero: '/images/TheDailyEdit/TheDailyEdit-Main.png',
+        live: 'https://frontend.getvoroa.com/',
+        github: 'https://github.com/AdityaHemantBhat/The-Daily-Edit',
+      },
+      {
+        id: '3',
+        title: 'Damodar Dental Care',
+        image: '/images/Damodar%20Dental%20Care/Damodar-Dental-Care-fullscreen.png',
+        hero: '/images/Damodar%20Dental%20Care/Damodar-dental-care-front.png',
+      },
+      {
+        id: '4',
+        title: 'Nizachem',
+        image: '/images/Nizachem/Nizachem-fullscreen.png',
+        hero: '/images/Nizachem/Nizachem-Main.png',
+        live: 'https://nizachem.vercel.app/',
+        github: 'https://github.com/AdityaHemantBhat/Nizachem',
+      },
+    ];
+
+    for (const preview of previews) {
+      const { $, text, cleanup } = await mount(
+        <MemoryRouter initialEntries={[`/project/${preview.id}`]}>
+          <ProjectProvider>
+            <Routes>
+              <Route path="/project/:id" element={<Project />} />
+            </Routes>
+          </ProjectProvider>
+        </MemoryRouter>,
+      );
+
+      const image = $('[data-lenis-prevent][role="region"] img');
+      assert.equal(image?.getAttribute('src'), preview.image, `${preview.title} uses its full-page screenshot`);
+      assert.equal($('[data-lenis-prevent][role="region"]')?.getAttribute('tabindex'), '0', `${preview.title} preview is keyboard-scrollable`);
+      assert.equal(
+        $('section[aria-label$="project hero"] img')?.getAttribute('src'),
+        preview.hero,
+        `${preview.title} uses a regular hero image instead of its full-page screenshot`,
+      );
+      if (preview.live) {
+        assert.ok($(`a[href="${preview.live}"]`), `${preview.title} links to its live website`);
+      }
+      if (preview.github) {
+        assert.ok($(`a[href="${preview.github}"]`), `${preview.title} links to its GitHub repository`);
+      }
+      assert.match(text, new RegExp(preview.title), `${preview.title} project renders`);
+
+      if (preview.id === '3') {
+        assert.ok($('a[href="https://www.damodardental.co.in/"]'), 'Damodar Dental Care links to its live website');
+        assert.equal($('a[href*="github.com"]'), null, 'Damodar Dental Care has no GitHub link');
+        assert.match(text, /React\.js/, 'Damodar Dental Care is listed as a React.js project');
+      }
+
+      await cleanup();
+    }
   });
 });

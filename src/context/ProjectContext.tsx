@@ -6,67 +6,85 @@ export interface ProjectData {
   category: string;
   year: string;
   description: string;
+  challenge?: string;
+  technologies?: string[];
   mainImage: string;
+  mainImageAlt?: string;
   galleryImages: string[];
+  galleryImageAlts?: string[];
+  galleryImageFits?: ('cover' | 'contain')[];
   liveLink?: string;
   githubRepo?: string;
 }
 
-const projects: ProjectData[] = [
+export const projects: ProjectData[] = [
   {
     id: "1",
-    title: "CanvasTech",
-    category: "Full Stack Development",
+    title: "Nirakar Education Society",
+    category: "Full-Stack Development",
     year: "2026",
-    description: "A modern redo of a job consultant and recruitment platform, specializing in streamlining the manpower hunt for clients. Built with the full MERN stack, it features automated email resume authentication and a seamless professional workflow. The core challenge was re-architecting the entire platform with completely new technology and a premium design language from the ground up.",
-    mainImage: "/images/CanvasTech/CanvasTech.webp",
+    description: "A comprehensive digital platform for an educational society, featuring institutional information, dynamic content management, an administrative dashboard, and a digital library.",
+    challenge: "Engineering a scalable, multi-campus education platform capable of managing institutional portals across three schools (Shri Nirakar High School, Tudal High School, and S.S. Angle Higher Secondary School). Key technical hurdles included building a robust role-based administrative dashboard, integrating dynamic content management with deterministic classical PDF processing for student archives, and implementing secure document management and alumni networking across distributed campus databases.",
+    technologies: ["React 19", "Node.js", "Express", "PostgreSQL", "Prisma", "Tailwind CSS"],
+    mainImage: "/images/Nirakar%20Education%20Society/NEC-Single.png",
+    mainImageAlt: "Shri Nirakar Education Society website homepage",
     galleryImages: [
-      "/images/CanvasTech/CanvasTech-Apply.webp",
-      "/images/CanvasTech/CanvasTech-Clients.webp"
+      "/images/Nirakar%20Education%20Society/Nirakar-Education-Society.png"
     ],
-    liveLink: "https://canvatech-1.onrender.com/",
-    githubRepo: "https://github.com/AdityaHemantBhat/canvatech"
+    galleryImageAlts: ["Full-page screenshot of the Shri Nirakar Education Society website"],
+    galleryImageFits: ["contain"],
+    liveLink: "https://nirakar-education-society.vercel.app/",
+    githubRepo: "https://github.com/AdityaHemantBhat"
   },
   {
     id: "2",
-    title: "Customer Relationship Management (CRM)",
-    category: "Full Stack Development",
+    title: "The Daily Edit",
+    category: "Full-Stack Development",
     year: "2026",
-    description: "A modern reimagining of a Customer Relationship Management (CRM) platform, designed specifically to streamline manpower acquisition and operational workflows for clients. Built using the full MERN stack, the platform delivers a seamless, scalable, and high-performance experience with a refined, professional design language.The system includes a dedicated Admin/Staff Panel that enables staff to efficiently fetch and manage user details, assign diagnostic tests, and oversee the entire patient lifecycle. Customers are provided with flexible payment options — they can either pay instantly within the platform, complete payment later via a WhatsApp notification link, or use a QR code-based payment system integrated with Razorpay.A core feature of the platform is its structured Workflow Management System, which allows staff to track each patient's journey step-by-step:Patient Registration,Sample Pending,Sample Collected,Processing,Report Ready.This ensures complete transparency and smooth operational flow within pathology labs.Once reports are generated, staff can upload and deliver them directly through the system. Patients can securely log in using their phone number to access and download their reports anytime, ensuring convenience and accessibility.The core challenge of this project was re-architecting the entire platform from scratch using modern technologies, while also introducing a premium UI/UX experience tailored for healthcare workflows.",
-    mainImage: "/images/Pathology/Pathology-Dashboard.webp",
+    description: "A modern digital publishing platform featuring articles, blogs, editorial content, and dynamic content management with an administrative panel.",
+    challenge: "Developing a high-throughput content architecture and scalable publishing infrastructure with real-time editorial workflows. Key technical challenges included fine-tuning programmatic SEO with dynamic metadata and sitemaps, optimizing server response times through Socket.IO cache invalidation, and seamlessly integrating a browser-based client-side processing suite alongside rich article management, scheduling, and view tracking.",
+    technologies: ["React", "Express", "PostgreSQL", "Prisma", "Socket.IO", "Tailwind CSS"],
+    mainImage: "/images/TheDailyEdit/TheDailyEdit-Main.png",
     galleryImages: [
-      "/images/Pathology/Pathology-Dashboard.webp",
-      "/images/Pathology/Pathology-Workflow.webp"
+      "/images/TheDailyEdit/TheDailyEdit-Fullscreen.png"
     ],
-    liveLink: "https://pathology-lab-5ylr.onrender.com/login",
-    githubRepo: "https://github.com/AdityaHemantBhat/Pathology-Lab"
+    galleryImageAlts: ["Full-page screenshot of The Daily Edit website"],
+    galleryImageFits: ["contain"],
+    liveLink: "https://frontend.getvoroa.com/",
+    githubRepo: "https://github.com/AdityaHemantBhat/The-Daily-Edit"
   },
   {
     id: "3",
-    title: "EcoBazzar",
-    category: "React Development",
-    year: "2025",
-    description: "EcoBazzar is a modern, user-friendly e-commerce platform built with React and Node.js, designed to provide a seamless shopping experience for customers while offering powerful management tools for administrators. The platform features a clean, intuitive interface with easy navigation, product browsing, and secure checkout. For administrators, EcoBazzar includes a comprehensive dashboard to manage products, track orders, and oversee store operations efficiently. The core challenge of this project was to create a scalable, high-performance e-commerce solution that balances ease of use with robust functionality, ensuring a smooth experience for both shoppers and store owners.",
-    mainImage: "/images/EcoBazzar/EcoBazzar-Home.webp",
+    title: "Damodar Dental Care",
+    category: "Frontend Development",
+    year: "2026",
+    description: "A modern, responsive website for Damodar Dental Care, built with React.js to introduce the clinic, its dental services, and patient information.",
+    technologies: ["React.js"],
+    mainImage: "/images/Damodar%20Dental%20Care/Damodar-dental-care-front.png",
+    mainImageAlt: "Damodar Dental Care website homepage",
     galleryImages: [
-      "/images/EcoBazzar/EcoBazzar-Home.webp",
-      "/images/EcoBazzar/EcoBazzar-Cart.webp"
+      "/images/Damodar%20Dental%20Care/Damodar-Dental-Care-fullscreen.png"
     ],
-    liveLink: "https://eco-bazzar-rho.vercel.app/",
-    githubRepo: "https://github.com/AdityaHemantBhat/EcoBazzar"
+    galleryImageAlts: ["Full-page screenshot of the Damodar Dental Care website"],
+    galleryImageFits: ["contain"],
+    liveLink: "https://www.damodardental.co.in/"
   },
   {
     id: "4",
-    title: "Restaurant Website",
-    category: "Frontend Design",
-    year: "2025",
-    description: "Modern restaurant website built with pure HTML and CSS featuring elegant design, responsive layout, and smooth animations. Includes menu showcase, gallery section, contact information, and mobile first approach with clean typography and visual hierarchy.",
-    mainImage: "/images/Restaurant/Restaurant-Home.webp",
+    title: "Nizachem",
+    category: "Full-Stack Development",
+    year: "2026",
+    description: "A complete web development project showcasing a modern digital presence with frontend and backend functionality.",
+    challenge: "Developing a production-grade restaurant and bar web application with real-time operational state tracking. Challenges included synchronizing live opening status and reservation queues via WebSocket and REST APIs, architecting a responsive digital menu with structured schema markup for local SEO, and maintaining ultra-smooth 60fps animations with GSAP and Lenis without compromising mobile loading performance.",
+    technologies: ["React", "Node.js", "NestJS", "Prisma", "PostgreSQL", "GSAP"],
+    mainImage: "/images/Nizachem/Nizachem-Main.png",
     galleryImages: [
-      "/images/Restaurant/Restaurant-Home.webp"
+      "/images/Nizachem/Nizachem-fullscreen.png"
     ],
-    liveLink: "https://adityahemantbhat.github.io/cohort-2.0/Project%20-%20B/",
-    githubRepo: "https://github.com/AdityaHemantBhat/cohort-2.0/tree/main/Project%20-%20B"
+    galleryImageAlts: ["Full-page screenshot of the Nizachem website"],
+    galleryImageFits: ["contain"],
+    liveLink: "https://nizachem.vercel.app/",
+    githubRepo: "https://github.com/AdityaHemantBhat/Nizachem"
   }
 ];
 

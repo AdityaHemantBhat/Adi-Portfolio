@@ -1,73 +1,18 @@
-# React + TypeScript + Vite
+# Aditya Bhat Portfolio
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Portfolio website for Aditya Bhat, a full stack developer and web designer based in Goa, India.
 
-Currently, two official plugins are available:
+## Search engine optimization
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- Each route has a unique title, description, canonical URL, Open Graph/Twitter metadata, and structured data.
+- `npm run build` generates static route HTML metadata and an XML sitemap for the home, lookbook, contact, legal, and every project page.
+- `public/robots.txt` points crawlers to the deployed sitemap.
+- After deploying, submit `https://adityahemantbhat.com/sitemap.xml` in Google Search Console and Bing Webmaster Tools, and verify the site in both services.
 
-## React Compiler
+Search position cannot be guaranteed. Search Console verification, accurate public business/profile information, relevant third-party mentions, and earning reputable links are ongoing off-page work and cannot be performed by this static site build.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Contact coupon
 
-## Expanding the ESLint configuration
+Set `VITE_CONTACT_COUPON_CODE` in your local `.env.local` file or deployment environment to enable the 10% contact-page coupon. `.env.example` uses `ADITYA10` as a sample code; choose your own code before sharing it.
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
-
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+This is a static, frontend-only offer: Vite embeds `VITE_` variables in the public site bundle, so the code is visible to visitors. Applying it includes the code and discount in the contact email or WhatsApp message; there is no backend or checkout to validate or automatically enforce the discount.

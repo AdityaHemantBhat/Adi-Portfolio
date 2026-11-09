@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import { createWhatsAppUrl } from '../../lib/contact';
 
 export default function Footer() {
     return (
@@ -24,6 +25,9 @@ export default function Footer() {
                         </a>
                         <a href="https://www.linkedin.com/in/aditya-bhat-3661a8200/" target='_blank' rel='noopener noreferrer' className="hover-target hover:text-neutral-300 transition-colors">
                             LinkedIn<span className="sr-only"> (opens in new tab)</span>
+                        </a>
+                        <a href={createWhatsAppUrl('Hi Aditya, I would like to discuss a project.')} target="_blank" rel="noopener noreferrer" className="hover-target hover:text-neutral-300 transition-colors">
+                            WhatsApp<span className="sr-only"> (opens in new tab)</span>
                         </a>
                     </div>
                     <nav className="flex flex-col gap-4" aria-label="Footer navigation">

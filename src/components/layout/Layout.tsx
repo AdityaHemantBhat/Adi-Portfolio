@@ -7,6 +7,7 @@ import CustomCursor from '../ui/CustomCursor';
 import BackToTop from '../ui/BackToTop';
 import ScrollProgress from '../ui/ScrollProgress';
 import GrainOverlay from '../ui/GrainOverlay';
+import WhatsAppButton from '../ui/WhatsAppButton';
 
 export default function Layout({ children }: { children: ReactNode }) {
     const lenisRef = useRef(null);
@@ -34,6 +35,7 @@ export default function Layout({ children }: { children: ReactNode }) {
                 {children}
             </main>
             <Footer />
+            <WhatsAppButton />
             <BackToTop />
         </ReactLenis>
     );

@@ -61,7 +61,7 @@ export default function Navbar() {
         </Link>
 
         {/* Desktop Links */}
-        <div className="hidden md:flex gap-8 font-sans text-sm uppercase tracking-widest font-semibold">
+        <div className="hidden items-center gap-5 font-sans text-xs uppercase tracking-widest font-semibold lg:flex xl:gap-8 xl:text-sm">
           {links.map((link) => (
             <Link
               key={link.path}
@@ -71,10 +71,10 @@ export default function Navbar() {
               } transition-opacity duration-300`}
               aria-current={location.pathname === link.path ? 'page' : undefined}
             >
-              <span className="block group-hover:-translate-y-full transition-transform duration-300 ease-in-out">
+              <span className="block whitespace-nowrap transition-transform duration-300 ease-in-out xl:group-hover:-translate-y-full">
                 {link.name}
               </span>
-              <span className="absolute top-0 left-0 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-in-out" aria-hidden="true">
+              <span className="hidden whitespace-nowrap transition-transform duration-300 ease-in-out xl:absolute xl:left-0 xl:top-0 xl:block xl:translate-y-full xl:group-hover:translate-y-0" aria-hidden="true">
                 {link.name}
               </span>
             </Link>
@@ -83,7 +83,7 @@ export default function Navbar() {
 
         {/* Mobile Menu Toggle */}
         <button
-          className="md:hidden hover-target z-50 relative w-10 h-10 flex items-center justify-center"
+          className="lg:hidden hover-target z-50 relative w-10 h-10 flex items-center justify-center"
           onClick={() => setIsOpen(!isOpen)}
           aria-label={isOpen ? 'Close navigation menu' : 'Open navigation menu'}
           aria-expanded={isOpen}

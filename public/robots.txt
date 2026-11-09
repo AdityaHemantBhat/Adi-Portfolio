@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://adityahemantbhat.vercel.app/sitemap.xml
+Sitemap: https://adityahemantbhat.com/sitemap.xml

@@ -4,7 +4,8 @@ import { AnimatePresence, motion } from 'framer-motion';
 import Layout from './components/layout/Layout';
 import Loader from './components/ui/Loader';
 import Home from './pages/Home';
-import { ProjectProvider } from './context/ProjectContext';
+import { ProjectProvider, useProjectContext } from './context/ProjectContext';
+import { applyPageMetadata, getPageMetadata } from './lib/seo';
 
 // Lazy load non-critical routes for better code splitting
 const Lookbook = lazy(() => import('./pages/Lookbook'));
@@ -41,6 +42,7 @@ function RouteFallback() {
 
 function AnimatedRoutes() {
   const location = useLocation();
+  const { projects } = useProjectContext();
   const isInitialLaunch = useRef(true);
 
   useEffect(() => {
@@ -48,6 +50,10 @@ function AnimatedRoutes() {
     // we mark it as no longer being the 'initial launch'
     isInitialLaunch.current = false;
   }, []);
+
+  useEffect(() => {
+    applyPageMetadata(getPageMetadata(location.pathname, projects));
+  }, [location.pathname, projects]);
 
   return (
     <AnimatePresence mode="wait">

@@ -65,6 +65,9 @@ export default function SvgMorph({
 }: SvgMorphProps) {
   const reduce = useReducedMotion();
   const [index, setIndex] = useState(0);
+  const safePaths = paths.filter((path) => typeof path === 'string' && path.trim().length > 0);
+
+  if (safePaths.length === 0) return null;
 
   const commonProps = {
     fill: fill ? fillColor : 'none',
@@ -85,12 +88,12 @@ export default function SvgMorph({
       role="presentation"
     >
       {reduce ? (
-        <path d={paths[0]} {...commonProps} />
+        <path d={safePaths[0]} {...commonProps} />
       ) : (
         <motion.path
-          d={paths[index]}
+          d={safePaths[index % safePaths.length]}
           {...commonProps}
-          animate={{ d: paths[index] }}
+          animate={{ d: safePaths[index % safePaths.length] }}
           transition={{ duration, ease: 'easeInOut' }}
           onAnimationComplete={() => setIndex((i) => (i + 1) % paths.length)}
         />

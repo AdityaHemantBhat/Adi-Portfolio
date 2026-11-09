@@ -1,16 +1,37 @@
 import { useState, useRef } from 'react';
 import { motion } from 'framer-motion';
 import emailjs from '@emailjs/browser';
+import { MessageCircle } from 'lucide-react';
 import AnimatedText from '../components/ui/AnimatedText';
 import MagneticButton from '../components/ui/MagneticButton';
 import SvgMorph, { MORPH_BLOBS } from '../components/ui/SvgMorph';
 import AuroraBackground from '../components/ui/AuroraBackground';
 import Reveal from '../components/ui/Reveal';
+import { createWhatsAppUrl } from '../lib/contact';
 
 export default function Contact() {
   const form = useRef<HTMLFormElement>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [status, setStatus] = useState<'idle' | 'success' | 'error'>('idle');
+  const [couponInput, setCouponInput] = useState('');
+  const [couponStatus, setCouponStatus] = useState<'idle' | 'applied' | 'invalid' | 'unavailable'>('idle');
+  const couponCode = import.meta.env?.VITE_CONTACT_COUPON_CODE?.trim() ?? '';
+  const isCouponApplied = couponStatus === 'applied';
+
+  const applyCoupon = () => {
+    if (!couponCode) {
+      setCouponStatus('unavailable');
+      return;
+    }
+
+    if (couponInput.trim().toUpperCase() !== couponCode.toUpperCase()) {
+      setCouponStatus('invalid');
+      return;
+    }
+
+    setCouponInput(couponCode);
+    setCouponStatus('applied');
+  };
 
   const sendEmail = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -27,6 +48,8 @@ export default function Contact() {
       .then(() => {
         setStatus('success');
         form.current?.reset();
+        setCouponInput('');
+        setCouponStatus('idle');
         setTimeout(() => setStatus('idle'), 5000); // Reset success message after 5 seconds
       })
       .catch((error) => {
@@ -37,6 +60,10 @@ export default function Contact() {
         setIsSubmitting(false);
       });
   };
+
+  const whatsappMessage = isCouponApplied
+    ? `Hi Aditya, I would like to discuss a project and use my 10% discount code: ${couponCode}.`
+    : 'Hi Aditya, I would like to discuss a project.';
 
   return (
     <div className="relative overflow-hidden min-h-svh bg-background pt-28 md:pt-32 px-6 md:px-12 lg:px-24 pb-[max(6rem,env(safe-area-inset-bottom))] flex items-center justify-center">
@@ -73,6 +100,14 @@ export default function Contact() {
               <a href="tel:+919529644737" className="hover-target hover:text-neutral-500 transition-colors">+91 9529644737</a>
             </div>
             <div>
+              <span className="text-neutral-500 block mb-2 uppercase">WhatsApp</span>
+              <a href={createWhatsAppUrl('Hi Aditya, I would like to discuss a project.')} target="_blank" rel="noopener noreferrer" className="hover-target inline-flex items-center gap-2 hover:text-neutral-500 transition-colors">
+                <MessageCircle size={16} aria-hidden="true" />
+                <span>Message me</span>
+                <span className="sr-only"> on WhatsApp (opens in a new tab)</span>
+              </a>
+            </div>
+            <div>
               <span className="text-neutral-500 block mb-2 uppercase">Location</span>
               <p>Goa, India</p>
             </div>
@@ -88,7 +123,59 @@ export default function Contact() {
           onSubmit={sendEmail}
           aria-label="Contact form"
         >
-          <div>
+        <div className="space-y-4 border-y border-neutral-200 py-5">
+          <div className="flex items-start justify-between gap-4">
+            <div>
+              <p className="font-sans text-xs uppercase tracking-widest text-neutral-500">Have a coupon?</p>
+              <p className="mt-1 font-sans text-sm text-neutral-700">Get 10% off your project enquiry.</p>
+            </div>
+            <span className="shrink-0 border border-neutral-300 px-3 py-1 font-sans text-xs font-semibold uppercase tracking-widest">10% off</span>
+          </div>
+          <div className="flex gap-3">
+            <label htmlFor="coupon-code" className="sr-only">Coupon code</label>
+            <input
+              type="text"
+              id="coupon-code"
+              value={couponInput}
+              onChange={(event) => {
+                setCouponInput(event.target.value);
+                setCouponStatus('idle');
+              }}
+              onKeyDown={(event) => {
+                if (event.key === 'Enter') {
+                  event.preventDefault();
+                  applyCoupon();
+                }
+              }}
+              placeholder="ENTER YOUR CODE"
+              autoComplete="off"
+              aria-describedby="coupon-status"
+              aria-invalid={couponStatus === 'invalid'}
+              className="min-w-0 flex-1 border border-neutral-300 bg-white/70 px-4 py-3 font-sans text-sm uppercase tracking-widest focus:outline-none focus:border-accent placeholder:text-neutral-400"
+            />
+            <button
+              type="button"
+              onClick={applyCoupon}
+              className="hover-target border border-accent px-4 py-3 font-sans text-xs font-semibold uppercase tracking-widest transition-colors hover:bg-accent hover:text-white"
+            >
+              Apply
+            </button>
+          </div>
+          <input type="hidden" name="coupon_code" value={isCouponApplied ? couponCode : ''} />
+          <input type="hidden" name="discount_percent" value={isCouponApplied ? '10' : ''} />
+          <p
+            id="coupon-status"
+            role="status"
+            aria-live="polite"
+            className={`min-h-5 font-sans text-xs ${couponStatus === 'applied' ? 'text-green-700' : couponStatus === 'idle' ? 'text-neutral-500' : 'text-red-600'}`}
+          >
+            {couponStatus === 'applied' && '10% discount added to your enquiry.'}
+            {couponStatus === 'invalid' && 'That code is not valid. Please check and try again.'}
+            {couponStatus === 'unavailable' && 'Coupon codes are not configured yet. Please contact me directly.'}
+          </p>
+        </div>
+
+        <div>
             <label htmlFor="name" className="sr-only">Name</label>
             <input 
               type="text" 
@@ -132,6 +219,17 @@ export default function Contact() {
               {isSubmitting ? 'Sending...' : 'Send Message'}
             </button>
           </MagneticButton>
+
+          <a
+            href={createWhatsAppUrl(whatsappMessage)}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hover-target flex w-full items-center justify-center gap-2 border border-neutral-300 py-4 font-sans text-sm font-semibold uppercase tracking-widest transition-colors hover:border-accent hover:bg-accent hover:text-white"
+          >
+            <MessageCircle size={18} aria-hidden="true" />
+            <span>Let's Talk</span>
+            <span className="sr-only"> (opens in a new tab)</span>
+          </a>
           
           {/* Status Messages */}
           {status === 'success' && (
